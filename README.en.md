@@ -30,9 +30,9 @@ Install with `npm install @cyuanxv/datafinder-mcp@0.2.0`, or launch with `npx -y
 
 ## See it work. Then try it yourself.
 
-**[Watch the demo (43 seconds)](https://github.com/user-attachments/assets/e4e3d4c6-b403-4118-82ea-9fa7db66e3ad)** · [Download MP4](assets/datafinder-mcp-demo.zh.mp4) · [Chinese subtitles](assets/datafinder-mcp-demo.zh.srt) · [Installation troubleshooting](docs/TROUBLESHOOTING.en.md)
+**[Watch the demo (43 seconds)](https://github.com/user-attachments/assets/9ee2402d-c30d-40fc-82c7-02d2f36ef238)** · [Download MP4](assets/datafinder-mcp-demo.zh.mp4) · [Chinese subtitles](assets/datafinder-mcp-demo.zh.srt) · [Installation troubleshooting](docs/TROUBLESHOOTING.en.md)
 
-https://github.com/user-attachments/assets/e4e3d4c6-b403-4118-82ea-9fa7db66e3ad
+https://github.com/user-attachments/assets/9ee2402d-c30d-40fc-82c7-02d2f36ef238
 
 1080p, Chinese captions, no audio. Follow a preset question, view channel results, filter to iOS, and export CSV. The video uses fictional data and edited screenshots of actual local demo interactions; it is not a live ChatGPT session.
 

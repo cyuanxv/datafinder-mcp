@@ -32,9 +32,9 @@ DataFinder MCP connects Volcengine DataFinder to ChatGPT for conversational anal
 
 ## 先看一遍，再亲手试试
 
-**[观看演示视频（43 秒）](https://github.com/user-attachments/assets/e4e3d4c6-b403-4118-82ea-9fa7db66e3ad)** · [下载 MP4](assets/datafinder-mcp-demo.zh.mp4) · [中文字幕](assets/datafinder-mcp-demo.zh.srt) · [新手安装与排错指南](docs/TROUBLESHOOTING.zh-CN.md)
+**[观看演示视频（43 秒）](https://github.com/user-attachments/assets/9ee2402d-c30d-40fc-82c7-02d2f36ef238)** · [下载 MP4](assets/datafinder-mcp-demo.zh.mp4) · [中文字幕](assets/datafinder-mcp-demo.zh.srt) · [新手安装与排错指南](docs/TROUBLESHOOTING.zh-CN.md)
 
-https://github.com/user-attachments/assets/e4e3d4c6-b403-4118-82ea-9fa7db66e3ad
+https://github.com/user-attachments/assets/9ee2402d-c30d-40fc-82c7-02d2f36ef238
 
 1080p，无声中文字幕。展示“提问 → 查看渠道结果 → 只看 iOS → 导出 CSV”；使用虚构数据、预设问题和实际页面画面剪辑，不是真实 ChatGPT 会话。
 

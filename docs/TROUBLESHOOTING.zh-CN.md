@@ -2,7 +2,7 @@
 
 适用：独立安装版 0.2.0｜核对日期：2026-10-22
 
-[English](TROUBLESHOOTING.en.md) · [返回项目首页](../README.md) · [观看演示视频](https://github.com/user-attachments/assets/e4e3d4c6-b403-4118-82ea-9fa7db66e3ad)
+[English](TROUBLESHOOTING.en.md) · [返回项目首页](../README.md) · [观看演示视频](https://github.com/user-attachments/assets/9ee2402d-c30d-40fc-82c7-02d2f36ef238)
 
 第一次使用，建议先跑虚构数据样例。看到正确结果后，再连接自己的 DataFinder。
 

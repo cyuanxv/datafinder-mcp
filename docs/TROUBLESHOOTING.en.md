@@ -2,7 +2,7 @@
 
 Standalone version 0.2.0 · Checked October 22, 2026
 
-[简体中文](TROUBLESHOOTING.zh-CN.md) · [Project home](../README.en.md) · [Watch the demo](https://github.com/user-attachments/assets/e4e3d4c6-b403-4118-82ea-9fa7db66e3ad)
+[简体中文](TROUBLESHOOTING.zh-CN.md) · [Project home](../README.en.md) · [Watch the demo](https://github.com/user-attachments/assets/9ee2402d-c30d-40fc-82c7-02d2f36ef238)
 
 Start with the offline fixture. Connect your own DataFinder account after the sample query works.
 
