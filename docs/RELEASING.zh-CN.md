@@ -70,3 +70,15 @@ npm pack --dry-run --json --ignore-scripts
 - [npm whoami](https://docs.npmjs.com/cli/v11/commands/npm-whoami/)
 - [npm publish 与 dry-run](https://docs.npmjs.com/cli/v11/commands/npm-publish/)
 - [官方 MCP Registry 发布流程](https://modelcontextprotocol.io/registry/quickstart)
+
+## 已验证的发布环境
+
+0.2.0 已于 2026-10-22 发布到 npm 和官方 MCP Registry。公共 npm 全新安装通过全部 27 项独立验收，发现 52 个工具；95 个安装文件与最终压缩包一致，npm integrity 一致。
+
+维护者发布使用 Node.js 24+ 和新版 npm 11。本次使用 npm 11.21.1；本机 npm 10 上传超时，npm 11 成功进入官方网页验证并完成发布。不要关闭双重验证，也不要在聊天中发送凭证。
+
+```sh
+npx --yes npm@11 publish --access public --registry=https://registry.npmjs.org --ignore-scripts
+```
+
+仅在发布获批、安装包验收通过后，从准备好的 standalone/package 目录执行。网页确认在 npm 官方页面完成。npm 回读验证后，再登录 mcp-publisher 并及时提交，最后回读 Registry 的 active 记录。

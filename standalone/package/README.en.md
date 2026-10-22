@@ -1,8 +1,5 @@
 # DataFinder MCP — 52 tools, independent storage and background jobs
 
-> Release status: source and installation archive are available through GitHub Releases. npm uploads are timing out and MCP Registry publication is pending. Use the GitHub installation command below.
->
-> `npm install https://github.com/cyuanxv/datafinder-mcp/releases/download/v0.2.0/cyuanxv-datafinder-mcp-0.2.0.tgz`
 
 [简体中文](README.md) | **English**
 
@@ -16,7 +13,7 @@ Use **Node.js 24+**, which provides the built-in SQLite runtime. In a new direct
 
 ```sh
 npm init -y
-npm install https://github.com/cyuanxv/datafinder-mcp/releases/download/v0.2.0/cyuanxv-datafinder-mcp-0.2.0.tgz
+npm install @cyuanxv/datafinder-mcp@0.2.0
 ```
 
 For an MCP client that launches stdio servers, replace the example paths below with absolute paths on your computer:
@@ -36,7 +33,7 @@ For an MCP client that launches stdio servers, replace the example paths below w
 }
 ```
 
-The npx package command becomes available only after npm publication. A stdio client starts this executable locally. ChatGPT web requires a separately deployed authenticated remote server; local protocol acceptance is not ChatGPT web acceptance.
+Alternatively, launch with `npx -y @cyuanxv/datafinder-mcp@0.2.0`. A stdio client starts this executable locally. ChatGPT web requires a separately deployed authenticated remote server; local protocol acceptance is not ChatGPT web acceptance.
 
 ## Try fictional data first
 

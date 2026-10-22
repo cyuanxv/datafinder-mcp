@@ -1,15 +1,12 @@
 # DataFinder MCP 安装与演示指南
 
-> 发布状态：源码和安装包通过 GitHub Release 提供。npm 上传连接超时，MCP Registry 登记尚未完成；请先使用下面的 GitHub 安装命令。
->
-> `npm install https://github.com/cyuanxv/datafinder-mcp/releases/download/v0.2.0/cyuanxv-datafinder-mcp-0.2.0.tgz`
 
 [完整 52 工具独立安装](../standalone/README.md)
 [English](INSTALL.en.md) · [返回项目介绍](../README.md)
 
 ## 先选安装方式
 
-使用完整 **52 工具独立安装包 0.2.0**，请按[独立安装教程](../standalone/README.md)操作。它要求 **Node.js 24+**，使用 stdio、自有 SQLite 和单独运行的后台程序；两个修改开关默认关闭，不需要 D1 或云端登录网关。使用上方 GitHub Release 安装命令；npm 发布完成后再使用 npx。
+使用完整 **52 工具独立安装包 0.2.0**，请按[独立安装教程](../standalone/README.md)操作。它要求 **Node.js 24+**，使用 stdio、自有 SQLite 和单独运行的后台程序；两个修改开关默认关闭，不需要 D1 或云端登录网关。使用 `npm install @cyuanxv/datafinder-mcp@0.2.0` 安装，并按独立教程配置客户端。
 
 下面的浏览器演示是另一个使用虚构数据的体验入口。最后的云端章节只介绍可选的网页工作台部署，不是独立包安装步骤。
 

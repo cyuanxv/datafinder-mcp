@@ -15,7 +15,7 @@ node standalone/preflight.mjs --check-account
 
 The optional account check only runs npm whoami against the official registry. It does not log in, create tokens, alter access or publish.
 
-The draft npm name is `@cyuanxv/datafinder-mcp`; the Registry name is `io.github.cyuanxv/datafinder-mcp`, currently version 0.2.0. GitHub and npm are separate accounts. A public 404 is not proof of namespace rights or a reservation.
+The npm package name is `@cyuanxv/datafinder-mcp`; the Registry name is `io.github.cyuanxv/datafinder-mcp`, currently version 0.2.0. GitHub and npm are separate accounts. A public 404 is not proof of namespace rights or a reservation.
 
 If not logged in, the account owner may complete npm's browser login in their own terminal:
 
@@ -52,3 +52,15 @@ This checks the file list, not publishing permissions. Require explicit maintain
 Recheck name/version availability immediately before publication. Existing published versions cannot be overwritten; local tarballs do not reserve versions.
 
 [Official npm publish documentation](https://docs.npmjs.com/cli/v11/commands/npm-publish/) · [Official Registry quickstart](https://modelcontextprotocol.io/registry/quickstart)
+
+## Verified publication environment
+
+Version 0.2.0 was published to npm and the official MCP Registry on 2026-10-22. The public npm installation passed all 27 standalone acceptance checks (52 tools); all 95 installed files matched the frozen tarball and npm integrity.
+
+Use Node.js 24+ and a current npm 11 CLI for maintainer publication. This release used npm 11.21.1; npm 10 uploads timed out on the publishing machine, while npm 11 reached the official browser confirmation and completed publication. Do not disable 2FA or send credentials through chat.
+
+```sh
+npx --yes npm@11 publish --access public --registry=https://registry.npmjs.org --ignore-scripts
+```
+
+Run the command from the prepared standalone/package directory only after release approval and acceptance. Complete any confirmation on npm's official page. Authenticate mcp-publisher after npm verification, then publish promptly and read back the active Registry record.
