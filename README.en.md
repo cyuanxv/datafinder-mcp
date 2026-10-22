@@ -18,7 +18,7 @@ Built around the Model Context Protocol (MCP), the project provides **52 tool in
 
 The **0.2.0 standalone package** includes all 52 tools, its own SQLite database, persistent jobs and a separate background worker. Local and upstream writes are disabled by default; enabled changes still require preview, confirmation and readback. **Node.js 24+ is required.**
 
-[English standalone installation](standalone/README.en.md) · [中文安装](standalone/README.md) · [All 52 tools](standalone/TOOLS.md)
+[English standalone installation](standalone/README.en.md) · [Installation troubleshooting](docs/TROUBLESHOOTING.en.md) · [中文安装](standalone/README.md) · [All 52 tools](standalone/TOOLS.md)
 
 | Choose a route | What it runs |
 |---|---|
@@ -29,6 +29,12 @@ The **0.2.0 standalone package** includes all 52 tools, its own SQLite database,
 Install with `npm install @cyuanxv/datafinder-mcp@0.2.0`, or launch with `npx -y @cyuanxv/datafinder-mcp@0.2.0` after configuring the environment in the standalone guide.
 
 ## See it work. Then try it yourself.
+
+**[Watch the demo (43 seconds)](https://github.com/user-attachments/assets/9ee2402d-c30d-40fc-82c7-02d2f36ef238)** · [Download MP4](assets/datafinder-mcp-demo.zh.mp4) · [Chinese subtitles](assets/datafinder-mcp-demo.zh.srt) · [Installation troubleshooting](docs/TROUBLESHOOTING.en.md)
+
+https://github.com/user-attachments/assets/9ee2402d-c30d-40fc-82c7-02d2f36ef238
+
+1080p, Chinese captions, no audio. Follow a preset question, view channel results, filter to iOS, and export CSV. The video uses fictional data and edited screenshots of actual local demo interactions; it is not a live ChatGPT session.
 
 This is an actual screenshot of the local demo, using entirely fictional data. Run a guided query, filter to iOS, and export CSV. It does not connect to ChatGPT or a live DataFinder account.
 

@@ -20,7 +20,7 @@ DataFinder MCP connects Volcengine DataFinder to ChatGPT for conversational anal
 
 **0.2.0 独立安装包**包含完整 52 个工具、独立 SQLite 数据库、持久任务和单独运行的后台程序。默认关闭本地及上游修改，启用后仍需预览、确认和回读。**需要 Node.js 24 或更高版本。**
 
-[中文独立安装教程](standalone/README.md) · [English installation](standalone/README.en.md) · [52 工具清单](standalone/TOOLS.md)
+[中文独立安装教程](standalone/README.md) · [新手安装排错](docs/TROUBLESHOOTING.zh-CN.md) · [English installation](standalone/README.en.md) · [52 工具清单](standalone/TOOLS.md)
 
 | 选择哪种方式 | 运行什么 |
 |---|---|
@@ -31,6 +31,12 @@ DataFinder MCP connects Volcengine DataFinder to ChatGPT for conversational anal
 安装：`npm install @cyuanxv/datafinder-mcp@0.2.0`。也可用 `npx -y @cyuanxv/datafinder-mcp@0.2.0` 启动；请先按独立安装教程配置环境变量。
 
 ## 先看一遍，再亲手试试
+
+**[观看演示视频（43 秒）](https://github.com/user-attachments/assets/9ee2402d-c30d-40fc-82c7-02d2f36ef238)** · [下载 MP4](assets/datafinder-mcp-demo.zh.mp4) · [中文字幕](assets/datafinder-mcp-demo.zh.srt) · [新手安装与排错指南](docs/TROUBLESHOOTING.zh-CN.md)
+
+https://github.com/user-attachments/assets/9ee2402d-c30d-40fc-82c7-02d2f36ef238
+
+1080p，无声中文字幕。展示“提问 → 查看渠道结果 → 只看 iOS → 导出 CSV”；使用虚构数据、预设问题和实际页面画面剪辑，不是真实 ChatGPT 会话。
 
 下面是本地演示的真实截图，全部使用虚构数据。点击预设问题，执行分析、筛选 iOS 并导出 CSV；不连接 ChatGPT 或真实 DataFinder 账户。
 
