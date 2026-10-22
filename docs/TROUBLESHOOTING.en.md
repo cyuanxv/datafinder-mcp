@@ -1,6 +1,6 @@
 # DataFinder MCP: installation and troubleshooting
 
-Standalone version 0.2.0 · Checked October 22, 2026
+Standalone version 0.2.1 · Checked October 22, 2026
 
 [简体中文](TROUBLESHOOTING.zh-CN.md) · [Project home](../README.en.md) · [Watch the demo](https://github.com/user-attachments/assets/9ee2402d-c30d-40fc-82c7-02d2f36ef238)
 
@@ -24,7 +24,7 @@ npm --version
 mkdir datafinder-mcp-demo
 cd datafinder-mcp-demo
 npm init -y
-npm install @cyuanxv/datafinder-mcp@0.2.0
+npm install @cyuanxv/datafinder-mcp@0.2.1
 npm ls @cyuanxv/datafinder-mcp
 ```
 
@@ -53,7 +53,7 @@ Add this configuration in a stdio-compatible MCP client. Replace **all three abs
 
 On Windows, forward slashes such as `C:/Users/your-name/...` avoid JSON escaping mistakes. Remove comments and trailing commas. Reconnect the server or restart the client after saving. Complete tool discovery should return **52 tools**; clients may display only a selection at a time.
 
-You can also configure the client to launch `npx -y @cyuanxv/datafinder-mcp@0.2.0` with the same environment. The first launch needs registry access. An installed package with absolute paths is easier to troubleshoot.
+You can also configure the client to launch `npx -y @cyuanxv/datafinder-mcp@0.2.1` with the same environment. The first launch needs registry access. An installed package with absolute paths is easier to troubleshoot.
 
 A stdio server waiting silently in a terminal is not necessarily broken: it expects protocol requests from an MCP client, not ordinary chat text.
 

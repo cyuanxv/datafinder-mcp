@@ -1,6 +1,6 @@
 # DataFinder MCP｜用 ChatGPT 分析火山引擎数据
 
-[npm](https://www.npmjs.com/package/@cyuanxv/datafinder-mcp) · [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.cyuanxv%2Fdatafinder-mcp/versions/0.2.0)
+[npm](https://www.npmjs.com/package/@cyuanxv/datafinder-mcp) · [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.cyuanxv%2Fdatafinder-mcp/versions/0.2.1)
 
 **简体中文** | [English](README.en.md)
 
@@ -18,7 +18,7 @@ DataFinder MCP connects Volcengine DataFinder to ChatGPT for conversational anal
 
 ## 安装完整 52 工具版
 
-**0.2.0 独立安装包**包含完整 52 个工具、独立 SQLite 数据库、持久任务和单独运行的后台程序。默认关闭本地及上游修改，启用后仍需预览、确认和回读。**需要 Node.js 24 或更高版本。**
+**0.2.1 独立安装包**包含完整 52 个工具、独立 SQLite 数据库、持久任务和单独运行的后台程序。默认关闭本地及上游修改，启用后仍需预览、确认和回读。**需要 Node.js 24 或更高版本。**
 
 [中文独立安装教程](standalone/README.md) · [新手安装排错](docs/TROUBLESHOOTING.zh-CN.md) · [English installation](standalone/README.en.md) · [52 工具清单](standalone/TOOLS.md)
 
@@ -28,7 +28,7 @@ DataFinder MCP connects Volcengine DataFinder to ChatGPT for conversational anal
 | 网页工作台 | 单独的云端部署、D1 和登录网关；ChatGPT 网页连接需要远程服务 |
 | 下方浏览器演示 | 预设问题和虚构数据，不建立 MCP 客户端连接 |
 
-安装：`npm install @cyuanxv/datafinder-mcp@0.2.0`。也可用 `npx -y @cyuanxv/datafinder-mcp@0.2.0` 启动；请先按独立安装教程配置环境变量。
+安装：`npm install @cyuanxv/datafinder-mcp@0.2.1`。也可用 `npx -y @cyuanxv/datafinder-mcp@0.2.1` 启动；请先按独立安装教程配置环境变量。
 
 ## 先看一遍，再亲手试试
 
@@ -118,7 +118,7 @@ ChatGPT 负责理解问题和调用工具，工作台负责校验参数、执行
 
 ## 检查与验证
 
-当前源码通过 **441 项自动化测试、27 项独立版集成检查、TypeScript 类型检查和生产构建**，源码包解压后也完成测试复核。自动化测试和演示使用模拟数据，另完成有限的真实只读验收；这些结果不代表每个租户或部署平台均已验证。
+当前源码通过 **444 项自动化测试、32 项独立版集成检查、TypeScript 类型检查和生产构建**，源码包解压后也完成测试复核。自动化测试和演示使用模拟数据，另完成有限的真实只读验收；这些结果不代表每个租户或部署平台均已验证。
 
 ## 本地检查
 
@@ -153,7 +153,7 @@ npm run build
 - 保留查询、筛选、字典、公式、条件版本、报告导出及管理功能的代码。
 - 示例字典、业务口径默认未确认，需要使用者自行定义。
 - 标签、业务维度、某些原生报表管理能力依赖厂商套餐、权限或尚未验证的接口。请勿将目录中出现的功能理解为所有租户都已可用。
-- 独立版已完成 27 项安装与集成检查，以及有限的真实只读查询、后台执行和下载验收；不代表每个火山接口、租户、云端页面或 ChatGPT 网页连接均已验收。上游修改只用虚构数据测试。
+- 独立版已完成 32 项安装与集成检查，以及有限的真实只读查询、后台执行和下载验收；不代表每个火山接口、租户、云端页面或 ChatGPT 网页连接均已验收。上游修改只用虚构数据测试。
 
 ## 发布前
 

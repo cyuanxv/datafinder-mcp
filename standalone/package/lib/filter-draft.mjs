@@ -8,3 +8,9 @@ export function readFilterDraft(text){
   return {valid:true,value};
  }catch{return {valid:false};}
 }
+
+// Keep invalid or blank drafts visible; never silently turn them into zero.
+export function filterValueDraft(raw,numeric){
+ if(!numeric)return raw;
+ return raw.trim()!==''&&Number.isFinite(Number(raw))?Number(raw):raw;
+}
