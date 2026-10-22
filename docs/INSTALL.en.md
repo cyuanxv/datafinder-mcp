@@ -1,11 +1,15 @@
 # DataFinder MCP installation and demo guide
 
+> Release status: source and installation archive are available through GitHub Releases. npm uploads are timing out and MCP Registry publication is pending. Use the GitHub installation command below.
+>
+> `npm install https://github.com/cyuanxv/datafinder-mcp/releases/download/v0.2.0/cyuanxv-datafinder-mcp-0.2.0.tgz`
+
 [Full 52-tool standalone installation](../standalone/README.en.md)
 [简体中文](INSTALL.zh-CN.md) · [Back to the README](../README.en.md)
 
 ## Choose your installation
 
-For the full **52-tool standalone package 0.2.0**, use [the complete English guide](../standalone/README.en.md). It requires **Node.js 24+**, runs over stdio, uses its own SQLite database and supports a separate background worker. Both write switches default to false. It does not need D1 or a cloud login gateway. Install with `npm install @cyuanxv/datafinder-mcp@0.2.0`, or configure npx as described in the guide.
+For the full **52-tool standalone package 0.2.0**, use [the complete English guide](../standalone/README.en.md). It requires **Node.js 24+**, runs over stdio, uses its own SQLite database and supports a separate background worker. Both write switches default to false. It does not need D1 or a cloud login gateway. Use the GitHub Release installation command above; npx package installation remains pending.
 
 The browser demo below is a separate guided walkthrough with fictional data. The final cloud section describes the optional web workbench, not the standalone installation.
 

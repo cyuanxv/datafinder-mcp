@@ -1,5 +1,9 @@
 # DataFinder MCP — 52 tools, independent storage and background jobs
 
+> 发布状态：源码和安装包通过 GitHub Release 提供。npm 上传连接超时，MCP Registry 登记尚未完成；请先使用下面的 GitHub 安装命令。
+>
+> `npm install https://github.com/cyuanxv/datafinder-mcp/releases/download/v0.2.0/cyuanxv-datafinder-mcp-0.2.0.tgz`
+
 **简体中文** | [English](README.en.md)
 
 独立安装版现已接入与云端版相同名称的 **52 个 MCP 工具**，包括分析、指标字典、映射、查询模板、连续追问、任务、巡检、归档、元数据预览和确认。使用自己的 SQLite 数据库，不需要原作者的服务、数据库或密钥。
@@ -14,7 +18,7 @@
 
 ```sh
 npm init -y
-npm install @cyuanxv/datafinder-mcp@0.2.0
+npm install https://github.com/cyuanxv/datafinder-mcp/releases/download/v0.2.0/cyuanxv-datafinder-mcp-0.2.0.tgz
 ```
 
 支持 stdio 的 MCP 客户端可按下面配置。将两处示例路径替换为本机真实路径：
@@ -34,7 +38,7 @@ npm install @cyuanxv/datafinder-mcp@0.2.0
 }
 ```
 
-也可使用 `npx -y @cyuanxv/datafinder-mcp@0.2.0` 启动。stdio 是客户端在本机启动的连接方式；ChatGPT 网页需要单独部署的远程服务，本次本地验收不等于 ChatGPT 网页原生连接验收。
+npm 发布完成后才可使用 npx 包名启动。stdio 是客户端在本机启动的连接方式；ChatGPT 网页需要单独部署的远程服务，本次本地验收不等于 ChatGPT 网页原生连接验收。
 
 ## 先用虚构数据试用
 
