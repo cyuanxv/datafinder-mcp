@@ -15,7 +15,7 @@ node standalone/preflight.mjs --check-account
 
 第一条只检查本地配置，第二条额外执行官方 npm registry 的 `npm whoami`。它们不会登录、创建令牌、修改权限或发布。
 
-拟用 npm 包名为 `@cyuanxv/datafinder-mcp`，Registry 名为 `io.github.cyuanxv/datafinder-mcp`。GitHub 账号和 npm 账号相互独立。即使 npm 公开查询返回 404，也只能说明该包当前没有公开返回，不能证明已获得命名空间权限或预留名称。
+正式 npm 包名为 `@cyuanxv/datafinder-mcp`，Registry 名为 `io.github.cyuanxv/datafinder-mcp`。GitHub 账号和 npm 账号相互独立。即使 npm 公开查询返回 404，也只能说明该包当前没有公开返回，不能证明已获得命名空间权限或预留名称。
 
 如果 npm 未登录，在你自己的终端执行以下登录动作并自行完成浏览器验证：
 
@@ -52,7 +52,7 @@ npm pack --dry-run --json --ignore-scripts
 
 ## 3. 只有决定公开后才执行
 
-以下是将来的操作顺序，本轮不执行：
+以下流程供后续发布复用；0.2.0 已发布，不能覆盖同一版本：
 
 1. 新建干净仓库 `cyuanxv/datafinder-mcp`，上传经过检查的源码；不改变原私有仓库可见性，不复制旧历史。回读仓库和所有对外文档。
 2. 核实最终仓库 URL 后补充 npm repository 字段及 Registry repository 信息，避免提前声称一个未创建的地址存在。
@@ -70,3 +70,15 @@ npm pack --dry-run --json --ignore-scripts
 - [npm whoami](https://docs.npmjs.com/cli/v11/commands/npm-whoami/)
 - [npm publish 与 dry-run](https://docs.npmjs.com/cli/v11/commands/npm-publish/)
 - [官方 MCP Registry 发布流程](https://modelcontextprotocol.io/registry/quickstart)
+
+## 已验证的发布环境
+
+0.2.0 已于 2026-10-22 发布到 npm 和官方 MCP Registry。公共 npm 全新安装通过全部 27 项独立验收，发现 52 个工具；95 个安装文件与最终压缩包一致，npm integrity 一致。
+
+维护者发布使用 Node.js 24+ 和新版 npm 11。本次使用 npm 11.21.1；本机 npm 10 上传超时，npm 11 成功进入官方网页验证并完成发布。不要关闭双重验证，也不要在聊天中发送凭证。
+
+```sh
+npx --yes npm@11 publish --access public --registry=https://registry.npmjs.org --ignore-scripts
+```
+
+仅在发布获批、安装包验收通过后，从准备好的 standalone/package 目录执行。网页确认在 npm 官方页面完成。npm 回读验证后，再登录 mcp-publisher 并及时提交，最后回读 Registry 的 active 记录。

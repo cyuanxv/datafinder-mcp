@@ -1,8 +1,6 @@
 # DataFinder MCP — ChatGPT Analytics for Volcengine DataFinder
 
-> Release status: source and installation archive are available through GitHub Releases. npm uploads are timing out and MCP Registry publication is pending. Use the GitHub installation command below.
->
-> `npm install https://github.com/cyuanxv/datafinder-mcp/releases/download/v0.2.0/cyuanxv-datafinder-mcp-0.2.0.tgz`
+[npm](https://www.npmjs.com/package/@cyuanxv/datafinder-mcp) · [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.cyuanxv%2Fdatafinder-mcp/versions/0.2.0)
 
 [简体中文](README.md) | **English**
 
@@ -28,7 +26,7 @@ The **0.2.0 standalone package** includes all 52 tools, its own SQLite database,
 | Web workbench | Separate cloud deployment with D1 and an authentication gateway; needed for ChatGPT web's remote connection |
 | Browser demo below | Preset questions and fictional data; no MCP client connection |
 
-Use the GitHub Release installation command above, then configure the environment in the standalone guide. The intended npm name is `@cyuanxv/datafinder-mcp`; do not use it until npm publication is confirmed.
+Install with `npm install @cyuanxv/datafinder-mcp@0.2.0`, or launch with `npx -y @cyuanxv/datafinder-mcp@0.2.0` after configuring the environment in the standalone guide.
 
 ## See it work. Then try it yourself.
 

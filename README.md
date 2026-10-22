@@ -1,8 +1,6 @@
 # DataFinder MCP｜用 ChatGPT 分析火山引擎数据
 
-> 发布状态：源码和安装包通过 GitHub Release 提供。npm 上传连接超时，MCP Registry 登记尚未完成；请先使用下面的 GitHub 安装命令。
->
-> `npm install https://github.com/cyuanxv/datafinder-mcp/releases/download/v0.2.0/cyuanxv-datafinder-mcp-0.2.0.tgz`
+[npm](https://www.npmjs.com/package/@cyuanxv/datafinder-mcp) · [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.cyuanxv%2Fdatafinder-mcp/versions/0.2.0)
 
 **简体中文** | [English](README.en.md)
 
@@ -30,7 +28,7 @@ DataFinder MCP connects Volcengine DataFinder to ChatGPT for conversational anal
 | 网页工作台 | 单独的云端部署、D1 和登录网关；ChatGPT 网页连接需要远程服务 |
 | 下方浏览器演示 | 预设问题和虚构数据，不建立 MCP 客户端连接 |
 
-请使用上方 GitHub Release 安装命令，再按独立安装教程配置环境变量。npm 包名保留为 `@cyuanxv/datafinder-mcp`，发布确认前不使用该包名安装。
+安装：`npm install @cyuanxv/datafinder-mcp@0.2.0`。也可用 `npx -y @cyuanxv/datafinder-mcp@0.2.0` 启动；请先按独立安装教程配置环境变量。
 
 ## 先看一遍，再亲手试试
 
