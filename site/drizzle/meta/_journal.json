@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1791912762498,
+      "tag": "0000_careless_tempest",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1791983818425,
+      "tag": "0001_light_blade",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1791991599832,
+      "tag": "0002_cloud_operations",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1792050464101,
+      "tag": "0003_exotic_hiroim",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1792060779838,
+      "tag": "0004_slow_malice",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1792061180281,
+      "tag": "0005_burly_quicksilver",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1792063848582,
+      "tag": "0006_massive_thor",
+      "breakpoints": true
+    }
+  ]
+}

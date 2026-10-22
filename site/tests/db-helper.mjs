@@ -1,0 +1,3 @@
+import {DatabaseSync} from 'node:sqlite';
+import {readFileSync} from 'node:fs';
+export function testDB(){const sql=new DatabaseSync(':memory:');for(const file of JSON.parse(readFileSync(new URL('../drizzle/meta/_journal.json',import.meta.url),'utf8')).entries.map(x=>x.tag))sql.exec(readFileSync(new URL(`../drizzle/${file}.sql`,import.meta.url),'utf8'));return {sql,async batch(ss){sql.exec('BEGIN');try{const r=await Promise.all(ss.map(s=>s.run()));sql.exec('COMMIT');return r;}catch(e){sql.exec('ROLLBACK');throw e;}},prepare(q){return {bind(...a){return {async run(){return {meta:{changes:Number(sql.prepare(q).run(...a).changes)}}},async first(){return sql.prepare(q).get(...a)??null},async all(){return {results:sql.prepare(q).all(...a)}}}}}}}}

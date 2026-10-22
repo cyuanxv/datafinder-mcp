@@ -1,0 +1,60 @@
+import assert from 'node:assert/strict';
+import {mkdtemp,writeFile,readFile} from 'node:fs/promises';
+import {join,dirname,resolve} from 'node:path';
+import {spawn} from 'node:child_process';
+import {request as httpRequest} from 'node:http';
+import {stat} from 'node:fs/promises';
+import {DatabaseSync} from 'node:sqlite';
+import {connect} from './client.mjs';
+const entry=resolve(process.argv[2]),out=resolve(process.argv[3]);
+const dir=await mkdtemp(join(dirname(out),'full52-check-')),file=join(dir,'test.sqlite');
+const env={DATAFINDER_DEMO:'true',DATAFINDER_DB_PATH:file,DATAFINDER_LOCAL_OWNER:'acceptance-owner'};
+const written={...env,DATAFINDER_ALLOW_LOCAL_WRITES:'true'};
+const result={protocol:'2025-03-26',tools:[],checks:[]};
+let c=await connect(entry,env);
+function value(r){assert(!r.isError,JSON.stringify(r));const v=r.structuredContent;if(v?.error_code)throw Error(JSON.stringify(v));return v;}
+const check=name=>result.checks.push(name);
+async function apply(name,args,client=c){const preview=value(await client.call(name,args));assert.equal(preview.status,'installation_preview');const saved=await client.call(name,{...args,installation_confirmation:preview.installation_confirmation,installation_confirmed:true});return {saved,preview};}
+try{
+ const tools=(await c.request('tools/list')).tools;result.tools=tools.map(t=>t.name);assert.equal(tools.length,52);assert.equal(new Set(result.tools).size,52);check('52_tool_discovery');
+ for(const tool of tools){await c.call(tool.name,{}).catch(e=>assert(/-32602|-32603/.test(e.message)));}check('52_tool_dispatch_validation');
+ assert.equal(value(await c.call('get_connection_status')).read_only,true);
+ assert.equal(value(await c.call('metric_dictionary',{action:'list'})).items.length,0);check('readonly_dictionary_read');
+ const analysis=value(await c.call('run_analysis',{kind:'event',events:[{event_name:'demo_page_view',indicator:'events'}],start_date:'2020-01-01',end_date:'2020-01-02'}));assert.equal(analysis.status,'success');check('fictional_query');
+ const template={action:'save',key:'demo-template',name:'Demo template',expected_revision:0,confirmed:true,template:{kind:'analysis',config:{kind:'event',events:[{event_name:'demo_page_view',indicator:'events'}],granularity:'day'}}};
+ const ro=await apply('query_templates',template);assert.equal(ro.saved.structuredContent.error_code,'READ_ONLY');check('readonly_blocks_confirmed_save');
+ await c.close();c=await connect(entry,written);
+ const metric={schema_version:2,name:'Fictional metric',aliases:['Demo metric'],business:'Demo',meaning:'Fictional acceptance definition',population:'Fictional events',filters:'',numerator:'Events',denominator:'None',formula:'',identity_rule:'Event count',unit:'events',time_basis:'Event date',timezone:'Asia/Shanghai',maturity:'Complete days',limitations:'Fictional only',similar_metrics:'',unresolved:'No live source attached',notes:'',recommendation:'pending',recommendation_reason:'Fictional sample',change_reason:'Local acceptance',sources:[],default_report_id:null};
+ const metricDraft=value(await c.call('metric_dictionary',{action:'save',key:'demo-metric',expected_revision:0,metric}));assert(metricDraft.preview_hash);
+ const metricSaved=value((await apply('metric_dictionary',{action:'save',key:'demo-metric',expected_revision:0,metric,confirmed:true,preview_hash:metricDraft.preview_hash})).saved);assert.equal(metricSaved.readback_verified,true);check('dictionary_preview_save_readback');
+ const mapping={name:'Fictional mapping',meaning:'Fictional local draft',implementation_status:'planned',effective_from:'2020-01-01',events:[{event_name:'demo_page_view'}],sources:[{document:'Fictional acceptance document',sheet:'Demo',range:'A1',sha256:'0'.repeat(64)}]};
+ const mappingDraft=value(await c.call('tracking_mapping',{action:'save',key:'demo-mapping',expected_revision:0,definition:mapping}));assert(mappingDraft.status==='preview');
+ const mappingSaved=value((await apply('tracking_mapping',{action:'save',key:'demo-mapping',expected_revision:0,definition:mapping,confirmed:true})).saved);assert.equal(mappingSaved.revision,1);check('mapping_draft_save');
+ const p=value(await c.call('query_templates',template));
+ const tampered=await c.call('query_templates',{...template,name:'Changed',installation_confirmation:p.installation_confirmation,installation_confirmed:true});assert.equal(tampered.structuredContent.error_code,'CONFIRMATION_INVALID');check('tamper_rejected');
+ const saved=value(await c.call('query_templates',{...template,installation_confirmation:p.installation_confirmation,installation_confirmed:true}));assert.equal(saved.revision,1);
+ const replay=await c.call('query_templates',{...template,installation_confirmation:p.installation_confirmation,installation_confirmed:true});assert.equal(replay.structuredContent.error_code,'CONFIRMATION_INVALID');check('one_use_confirmation');const expired=value(await c.call('query_templates',{...template,key:'expired-template'}));const tokenDB=new DatabaseSync(file);tokenDB.prepare('UPDATE standalone_confirmations SET expires=0 WHERE token=?').run(expired.installation_confirmation);tokenDB.close();assert.equal((await c.call('query_templates',{...template,key:'expired-template',installation_confirmation:expired.installation_confirmation,installation_confirmed:true})).structuredContent.error_code,'CONFIRMATION_INVALID');check('expired_confirmation_rejected');
+ const submission={action:'submit',request_key:'acceptance-job',tasks:[{kind:'template',key:'demo-template',expected_revision:1,start_date:'2020-01-01',end_date:'2020-01-02'}]};
+ const job=value((await apply('cloud_query_jobs',submission)).saved);assert.equal(job.state,'queued');check('durable_job_submit');
+ await c.close();c=await connect(entry,env);assert.equal(value(await c.call('query_templates',{action:'read',key:'demo-template'})).revision,1);check('restart_preserves_template');assert.equal(value(await c.call('metric_dictionary',{action:'read',key:'demo-metric'})).revision,1);assert.equal(value(await c.call('tracking_mapping',{action:'read',key:'demo-mapping'})).revision,1);check('restart_preserves_dictionary_and_mapping');
+ assert.equal(value(await c.call('cloud_query_jobs',{action:'read',job_id:job.job_id})).state,'queued');check('restart_preserves_queue');
+ const worker=spawn(process.execPath,[entry,'--worker','--once'],{env:{PATH:process.env.PATH,...written},stdio:['ignore','pipe','pipe']});let err='';worker.stderr.on('data',b=>err+=b);const code=await new Promise(resolve=>worker.once('exit',resolve));assert.equal(code,0,err);
+ const done=value(await c.call('cloud_query_jobs',{action:'read',job_id:job.job_id}));assert.equal(done.state,'completed',JSON.stringify(done));check('independent_background_worker_executes');assert.equal(value(await c.call('read_operations')).local_worker_history[0].status,'completed');check('worker_history_readback');
+ const extra=await connect(entry,written);const duplicate=value((await apply('cloud_query_jobs',submission,extra)).saved);await extra.close();assert.equal(duplicate.job_id,job.job_id);check('queue_deduplicates');
+ const link=value(await c.call('export_aggregate_result',{kind:'job',id:job.job_id,format:'csv'}));const response=await fetch(link.download_url);assert.equal(response.status,200);const csv=await response.text();assert(csv.includes('demo_page_view'));await writeFile(join(dir,'result.csv'),csv);check('authenticated_download');
+ const u=new URL(link.download_url);u.searchParams.delete('_access');assert.equal((await fetch(u)).status,401);check('download_without_token_denied');u.searchParams.set('_access','é'.repeat(64));assert.equal((await fetch(u)).status,401);check('malformed_token_rejected');
+ const forged=await new Promise(resolve=>{const req=httpRequest(link.download_url,{headers:{Host:'attacker.invalid'}},res=>{res.resume();resolve(res.statusCode);});req.end();});assert.equal(forged,403);check('forged_download_host_denied');
+ const sql=new DatabaseSync(file);assert.equal(sql.prepare('SELECT COUNT(*) n FROM standalone_migrations').get().n,7);assert.equal(sql.prepare("SELECT COUNT(*) n FROM standalone_workers WHERE status='completed'").get().n,1);sql.close();check('migration_and_worker_evidence');
+ await c.close();c=await connect(entry,{...written,DATAFINDER_LOCAL_OWNER:'another-owner'});assert.equal(value(await c.call('query_templates',{action:'list'})).items.length,0);assert.equal((await c.call('cloud_query_jobs',{action:'read',job_id:job.job_id})).structuredContent.error_code,'NOT_FOUND');check('owner_isolation');
+ await c.close();c=await connect(entry,{...written,DATAFINDER_ALLOW_UPSTREAM_WRITES:'true'});
+ const nativeArgs={action:'preview',kind:'user_property',name:'demo_property',operation:'update',fields:{description:'Fictional confirmed change'}};
+ const nativePreview=value((await apply('native_metadata',nativeArgs)).saved);assert.equal(nativePreview.state,'pending');assert.equal(nativePreview.request.body.profiles[0].desc,'Fictional confirmed change');
+ const nativeApply=value((await apply('native_metadata',{action:'apply',change_id:nativePreview.change_id,confirmation:nativePreview.confirmation})).saved);assert.equal(nativeApply.state,'applied');assert.equal(nativeApply.result.readback_verified,true);check('fictional_upstream_preview_apply_readback');
+ await c.close();c=await connect(entry,written);const blockedPreview=value((await apply('native_metadata',nativeArgs)).saved);const blocked=(await apply('native_metadata',{action:'apply',change_id:blockedPreview.change_id,confirmation:blockedPreview.confirmation})).saved;assert.equal(blocked.structuredContent.error_code,'UPSTREAM_READ_ONLY');assert.equal(value(await c.call('native_metadata',{action:'change',change_id:blockedPreview.change_id})).state,'pending');check('upstream_write_default_denied_before_submission');
+ assert.equal((await stat(file)).mode&0o777,0o600);check('database_permissions');
+ const monitor=new DatabaseSync(file);const before=monitor.prepare('SELECT COUNT(*) n FROM standalone_workers').get().n;
+ const continuous=spawn(process.execPath,[entry,'--worker'],{env:{PATH:process.env.PATH,...written,DATAFINDER_WORKER_INTERVAL_MS:'1000'},stdio:['ignore','ignore','pipe']});continuous.stderr.resume();
+ let ticks=0;for(let i=0;i<50;i++){await new Promise(resolve=>setTimeout(resolve,100));ticks=monitor.prepare('SELECT COUNT(*) n FROM standalone_workers WHERE finished IS NOT NULL').get().n-before;if(ticks>=2)break;}
+ const ended=new Promise(resolve=>continuous.once('exit',resolve));continuous.kill('SIGTERM');assert.equal(await ended,0);monitor.close();assert(ticks>=2);check('continuous_worker_polling_and_graceful_stop');
+ result.status='pass';result.database=dir;await writeFile(out,JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({status:'pass',tools:52,checks:result.checks}));
+}finally{await c.close();}

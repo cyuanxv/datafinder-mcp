@@ -1,0 +1,10 @@
+.DS_Store
+.env*
+*.pem
+node_modules/
+artifacts/
+
+# Local hosted-source checkout and release evidence
+/work/
+
+!.env.example
