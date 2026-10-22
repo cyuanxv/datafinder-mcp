@@ -1,6 +1,6 @@
 # DataFinder MCP — ChatGPT Analytics for Volcengine DataFinder
 
-[npm](https://www.npmjs.com/package/@cyuanxv/datafinder-mcp) · [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.cyuanxv%2Fdatafinder-mcp/versions/0.2.1)
+[npm](https://www.npmjs.com/package/@cyuanxv/datafinder-mcp) · [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.cyuanxv%2Fdatafinder-mcp/versions/0.2.2)
 
 [简体中文](README.md) | **English**
 
@@ -16,7 +16,9 @@ Built around the Model Context Protocol (MCP), the project provides **52 tool in
 
 ## Install the full 52-tool edition
 
-The **0.2.1 standalone package** includes all 52 tools, its own SQLite database, persistent jobs and a separate background worker. Local and upstream writes are disabled by default; enabled changes still require preview, confirmation and readback. **Node.js 24+ is required.**
+The **0.2.2 standalone package** includes all 52 tools, its own SQLite database, persistent jobs and a separate background worker. Local and upstream writes are disabled by default; enabled changes still require preview, confirmation and readback. **Node.js 24+ is required.**
+Saved SQL supports output-column candidates, explicit table/column selection, and fixed previews before read-only execution. Saved dates and SQL stay unchanged. CTE output labels are candidates, not inferred business metrics.
+
 
 [English standalone installation](standalone/README.en.md) · [Installation troubleshooting](docs/TROUBLESHOOTING.en.md) · [中文安装](standalone/README.md) · [All 52 tools](standalone/TOOLS.md)
 
@@ -26,7 +28,7 @@ The **0.2.1 standalone package** includes all 52 tools, its own SQLite database,
 | Web workbench | Separate cloud deployment with D1 and an authentication gateway; needed for ChatGPT web's remote connection |
 | Browser demo below | Preset questions and fictional data; no MCP client connection |
 
-Install with `npm install @cyuanxv/datafinder-mcp@0.2.1`, or launch with `npx -y @cyuanxv/datafinder-mcp@0.2.1` after configuring the environment in the standalone guide.
+Install with `npm install @cyuanxv/datafinder-mcp@0.2.2`, or launch with `npx -y @cyuanxv/datafinder-mcp@0.2.2` after configuring the environment in the standalone guide.
 
 ## See it work. Then try it yourself.
 
@@ -116,7 +118,7 @@ No. The source includes fictional examples only. Bring your own account, databas
 
 ## Checks and validation
 
-The current code has passed **444 automated tests, 32 standalone integration checks, TypeScript type checking, and a production build**. Tests were also rerun on the extracted source archive. The automated suite and demo use simulated data. Separate limited live read-only acceptance passed; this does not establish compatibility with every tenant or deployment platform.
+The current code has passed **459 automated tests, 36 standalone integration checks, TypeScript type checking, and a production build**. Tests were also rerun on the extracted source archive. The automated suite and demo use simulated data. Separate limited live read-only acceptance passed; this does not establish compatibility with every tenant or deployment platform.
 
 ## Run checks locally
 
@@ -151,7 +153,7 @@ Keep `DATAFINDER_ALLOW_PROJECT_WIDE=false` until you explicitly intend to author
 - The source retains query, filter, dictionary, formula, condition versioning, report export, and management functionality.
 - Example metric definitions and business rules are unconfirmed by default. Define them for your own use case.
 - Tags, business dimensions, and some native report management capabilities depend on vendor plans, permissions, or APIs that have not yet been verified. A listed capability does not mean it is available to every tenant.
-- Standalone acceptance covers 32 installation/integration checks and limited live read-only queries, background execution and downloads. This does not establish every vendor endpoint, tenant, cloud-page deployment or native ChatGPT web connection. Upstream-write acceptance used fictional data only.
+- Standalone acceptance covers 36 installation/integration checks and limited live read-only queries, background execution and downloads. This does not establish every vendor endpoint, tenant, cloud-page deployment or native ChatGPT web connection. Upstream-write acceptance used fictional data only.
 
 ## Before publication
 
