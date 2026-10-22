@@ -1,0 +1,20 @@
+{
+  "name_suggestion": "datafinder-mcp",
+  "description": "Connect Volcengine DataFinder to ChatGPT with MCP: conversational product analytics, retention, funnels, metric dictionaries and CSV exports. 用自然语言查数、分析留存与转化，支持指标字典和结果导出。",
+  "topics": [
+    "datafinder",
+    "volcengine",
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "chatgpt",
+    "product-analytics",
+    "conversational-analytics",
+    "retention-analysis",
+    "funnel-analysis",
+    "data-analysis",
+    "typescript"
+  ],
+  "social_preview": "assets/cover.en.png",
+  "homepage": ""
+}

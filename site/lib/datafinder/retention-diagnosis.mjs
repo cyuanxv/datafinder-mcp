@@ -1,0 +1,22 @@
+import {QueryError} from './core.mjs';
+// Shape checked against a real cloud retention response on 2026-10-16.
+export function diagnoseRetention(output,minimum,now=Date.now()){
+ if(output.status!=='success'||output.data?.pagination?.has_more||output.truncated!==false)throw new QueryError('INCOMPLETE_RESULT','留存结果不完整或尚有分页，不能汇总诊断。');
+ const results=output.data.results;if(results?.length!==1||results[0].series.length!==1)throw new QueryError('UNVERIFIED_CONTRACT','留存诊断需要单个未分组队列序列。');
+ const r=results[0],s=r.series[0],headers=r.header_list;if(s.group_by_key!=='__all'||!Array.isArray(headers)||!headers.length)throw new QueryError('UNVERIFIED_CONTRACT','留存分组或窗口无法识别。');
+ const windows=headers.map(label=>({label,offset:label==='次日'?1:/^第\d+日$/.test(label)?Number(label.slice(1,-1))-1:null}));
+ if(windows.some(w=>w.offset===null||w.offset<1)||new Set(windows.map(w=>w.offset)).size!==windows.length)throw new QueryError('UNVERIFIED_CONTRACT','留存窗口不明确或重复。');
+ if(!Array.isArray(s.details)||JSON.stringify(s.details.map(d=>d[0]))!==JSON.stringify(r.date_index_list))throw new QueryError('UNVERIFIED_CONTRACT','留存队列身份无法匹配。');
+ const rows=s.details.map(d=>{if(d.length<2||d.length>headers.length+2||!/^\d{8}$/.test(d[0])||!Number.isSafeInteger(d[1])||d[1]<0)throw new QueryError('UNVERIFIED_CONTRACT','留存行结构不匹配。');const date=d[0].replace(/^(\d{4})(\d{2})(\d{2})$/,'$1-$2-$3');return {cohort_date:date,cohort_users:d[1],sample_status:d[1]<minimum?'small_sample':'sufficient_for_descriptive_review',windows:windows.map((w,i)=>{const v=d[i+2]??null,mature=Date.parse(date+'T00:00:00+08:00')+(w.offset+1)*86400000<=now;if(v!==null&&(!Array.isArray(v)||v.length!==2||v[0]!==null&&(!Number.isSafeInteger(v[0])||v[0]<0||v[0]>d[1])||v[1]!==null&&(typeof v[1]!=='number'||!Number.isFinite(v[1])||v[1]<0||v[1]>1)))throw new QueryError('UNVERIFIED_CONTRACT','留存计数或比例无效。');if(mature&&d[1]>0&&v?.[0]!==null&&v?.[0]!==undefined&&v?.[1]!==null&&Math.abs(v[0]/d[1]-v[1])>1e-8)throw new QueryError('INCONSISTENT_COUNTS','留存分子分母与上游比例不一致。');const returned=mature&&d[1]>0&&v?.[0]!==null&&v?.[0]!==undefined?v[0]:null;return {...w,maturity:mature?'mature':'immature',returned_users:returned,rate:returned===null?null:returned/d[1]};})};});
+ return {rows,windows:windows.map(w=>{const eligible=rows.filter(r=>r.windows.find(x=>x.offset===w.offset)?.rate!==null),n=eligible.reduce((s,r)=>s+r.cohort_users,0),returned=eligible.reduce((s,r)=>s+r.windows.find(x=>x.offset===w.offset).returned_users,0);return {...w,eligible_cohorts:eligible.length,total_cohorts:rows.length,cohort_user_observations:n,returned_user_observations:returned,weighted_rate:n?returned/n:null,sample_status:n<minimum?'small_sample':'sufficient_for_descriptive_review'};}),denominator_semantics:'日队列用户观测数；同一用户可出现在多个队列，不能称为区间去重用户数。',data_watermark:'unknown'};
+}
+export function compareRetention(before,after){return after.windows.map(w=>{const b=before.windows.find(x=>x.offset===w.offset);return {offset:w.offset,label:w.label,baseline:b??null,current:w,percentage_point_change:b&&b.eligible_cohorts===b.total_cohorts&&w.eligible_cohorts===w.total_cohorts&&b.weighted_rate!==null&&w.weighted_rate!==null?(w.weighted_rate-b.weighted_rate)*100:null,comparison_policy:'仅两侧全部队列窗口成熟且可用时比较加权留存率；不以较短成熟样本代替完整周期。'};});}
+
+// Compare explicit segments with the overall population, never as independent experiment arms.
+export function compareRetentionSegments(rows){
+ const overall=rows[0]?.current_diagnosis;
+ if(!overall)return {comparisons:[],ranked_lower_retention:[]};
+ const comparisons=rows.slice(1).map(row=>({segment:row.segment,reference:'总体',windows:compareRetention(overall,row.current_diagnosis).map(w=>({...w,rank_eligible:w.percentage_point_change!==null&&w.baseline.sample_status==='sufficient_for_descriptive_review'&&w.current.sample_status==='sufficient_for_descriptive_review'}))}));
+ const ranked_lower_retention=comparisons.flatMap(r=>r.windows.filter(w=>w.rank_eligible&&w.percentage_point_change<0).map(w=>({segment:r.segment,offset:w.offset,label:w.label,percentage_point_change:w.percentage_point_change,cohort_user_observations:w.current.cohort_user_observations,reference_cohort_user_observations:w.baseline.cohort_user_observations}))).sort((a,b)=>a.percentage_point_change-b.percentage_point_change);
+ return {comparisons,ranked_lower_retention,interpretation:'显式群体与包含该群体的总体比较；群体可重叠。仅完整成熟且样本达标的窗口参与描述性排序，不证明统计显著性或因果，不把队列观测数称为区间UV。'};
+}

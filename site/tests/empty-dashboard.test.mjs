@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {dashboardAssociations,readDashboard,findCatalog} from '../lib/datafinder/dashboard.mjs';
+import {dependencyStep} from '../lib/datafinder/dependency-jobs.mjs';
+import {PROJECT,QueryError} from '../lib/datafinder/core.mjs';
+const id='8900000000000000004';
+const detail={dashboard_id:id,app_id:PROJECT,is_dir:false,page_config:null,layout:[]};
+function api(d=detail,associations={}){const calls=[];return {calls,env:{},deadline:Date.now()+110000,output:x=>x.data,async request(m,p){calls.push(p);if(p.endsWith('/all'))return {data:[{dashboard_id:id,app_id:PROJECT,is_dir:false}]};if(p.includes('/list/'))return {data:[]};return {data:p.endsWith('/reports')?associations:{[id]:d}};}};}
+test('empty association object requires independently verified empty dashboard',async()=>{const a=api(),r=await dashboardAssociations(a,id);assert.equal(r.verified_empty,true);assert.deepEqual(r.reports,[]);assert.equal(a.calls.length,2);});
+test('known empty board remains readable and report catalog has no false failure',async()=>{const d=await readDashboard(api(),id);assert.equal(d.page_report_count,0);assert.equal(d.association.verified_empty,true);const c=await findCatalog(api(),'reports','',1);assert.equal(c.complete,true);assert.deepEqual(c.items,[]);});
+test('missing malformed mismatched and nonempty details never become empty',async()=>{for(const d of [null,{...detail,app_id:'other'},{...detail,dashboard_id:'other'},{...detail,is_dir:true},{...detail,page_config:{}},{...detail,page_config:{children:[{componentName:'Report',componentId:'1'}]}},{...detail,layout:[{i:'1'}]},{...detail,layout:undefined}])await assert.rejects(dashboardAssociations(api(d),id));});
+test('malformed association payload is not normalized to empty even with empty detail',async()=>{for(const a of [null,[],{[id]:{}},{[id]:{reports:null}},{other:{reports:[]}}])await assert.rejects(dashboardAssociations(api(detail,a),id),e=>e.code==='UNVERIFIED_CONTRACT');});
+test('valid association arrays use existing contract without extra lookup',async()=>{const a=api(null,{[id]:{reports:[],denied:1,total:1}});const r=await dashboardAssociations(a,id);assert.equal(r.denied,1);assert.equal(r.verified_empty,undefined);assert.equal(a.calls.length,1);});
+test('empty detail lookup permission failure stays a failure',async()=>{const a=api();a.request=async(m,p)=>{if(p.endsWith('/reports'))return {data:{}};throw new QueryError('UPSTREAM_HTTP_ERROR','403');};await assert.rejects(dashboardAssociations(a,id),e=>e.code==='UPSTREAM_HTTP_ERROR');});
+test('background scan completes a verified empty directory and persists evidence',async()=>{const r=await dependencyStep(api(),{kind:'dependency',asset_kind:'virtual_events',name:'target',max_depth:5});assert.equal(r.continue,false);assert.deepEqual(r.output.verified_empty_dashboard_ids,[id]);assert.equal(r.output.scanned_dashboard_count,1);assert.equal(r.output.scanned_report_count,0);assert.equal(r.output.visible_catalog_finished,true);assert.equal(r.output.coverage,'partial');});

@@ -1,0 +1,6 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {demoAnalysis,demoCSV} from '../../demo/model.mjs';
+test('offline demo validates seven dates and preserves channel totals',async()=>{const r=await demoAnalysis();assert.equal(r.total,9912);assert.equal(r.output.status,'success');assert.equal(r.output.validation.time_range_verified,true);assert.equal(r.dates.length,7);assert.deepEqual(r.rows.map(x=>x.total),[2184,3304,4424]);assert.equal(r.synthetic,true);});
+test('demo follow-up applies the iOS filter through the generated DSL',async()=>{const r=await demoAnalysis('ios');assert.equal(r.total,4746);assert.deepEqual(r.rows.map(x=>x.total),[1022,1582,2142]);assert.equal(r.dsl.content.profile_filters[0].expression.conditions[0].property_values[0],'ios');assert.equal(r.input.start_date,'2020-01-01');await assert.rejects(demoAnalysis('invalid'));});
+test('CSV contains all 21 date/channel rows and declares fictional provenance',async()=>{const r=await demoAnalysis('ios');const csv=demoCSV(r);const lines=csv.trim().split('\r\n');assert.equal(lines.length,22);assert(lines[0].includes('synthetic_data'));assert(lines.slice(1).every(x=>x.startsWith('"true"')&&x.includes('"ios"')));assert.equal(lines.slice(1).reduce((sum,line)=>sum+Number(line.split(',').at(-1).replaceAll('"','')),0),4746);});

@@ -1,0 +1,57 @@
+{
+  "name": "@cyuanxv/datafinder-mcp",
+  "version": "0.2.0",
+  "description": "Full 52-tool DataFinder MCP workbench with independent SQLite storage, background jobs and preview-confirmed changes.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  },
+  "bin": {
+    "datafinder-mcp": "server.mjs"
+  },
+  "mcpName": "io.github.cyuanxv/datafinder-mcp",
+  "files": [
+    "server.mjs",
+    "lib/",
+    "demo-model.mjs",
+    "README.md",
+    "LICENSE",
+    "THIRD-PARTY-NOTICES.md",
+    "server.json",
+    "database.mjs",
+    "runtime.mjs",
+    "policy.mjs",
+    "fixture.mjs",
+    "migrations/",
+    "TOOLS.md",
+    "README.en.md"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.3.1",
+    "zod": "4.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cyuanxv/datafinder-mcp.git",
+    "directory": "standalone"
+  },
+  "homepage": "https://github.com/cyuanxv/datafinder-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/cyuanxv/datafinder-mcp/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "keywords": [
+    "datafinder",
+    "volcengine",
+    "mcp",
+    "mcp-server",
+    "chatgpt",
+    "product-analytics",
+    "retention",
+    "funnel"
+  ]
+}

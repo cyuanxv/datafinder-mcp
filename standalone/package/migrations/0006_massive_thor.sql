@@ -1,0 +1,1 @@
+ALTER TABLE `cloud_jobs` ADD `control_request` text DEFAULT '' NOT NULL;

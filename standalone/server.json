@@ -1,0 +1,83 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.cyuanxv/datafinder-mcp",
+  "title": "DataFinder MCP",
+  "description": "DataFinder analytics with 52 tools, metric dictionaries, persistent jobs and confirmed changes.",
+  "version": "0.2.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@cyuanxv/datafinder-mcp",
+      "version": "0.2.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "DATAFINDER_AK",
+          "description": "Your DataFinder access key",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "DATAFINDER_SK",
+          "description": "Your DataFinder secret key",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "DATAFINDER_PROJECT_ID",
+          "description": "Your DataFinder project ID",
+          "isRequired": true
+        },
+        {
+          "name": "DATAFINDER_APP_ID",
+          "description": "Your DataFinder app ID",
+          "isRequired": true
+        },
+        {
+          "name": "DATAFINDER_SUBJECT_ID",
+          "description": "Your configured analysis subject ID",
+          "isRequired": true
+        },
+        {
+          "name": "DATAFINDER_ALLOW_PROJECT_WIDE",
+          "description": "Explicitly allow aggregate queries across authorized apps in the configured project. Default false.",
+          "isRequired": false,
+          "default": "false",
+          "choices": [
+            "false",
+            "true"
+          ]
+        },
+        {
+          "name": "DATAFINDER_DB_PATH",
+          "description": "Absolute path to your independent SQLite database",
+          "isRequired": false
+        },
+        {
+          "name": "DATAFINDER_LOCAL_OWNER",
+          "description": "Local owner scope used for stored data",
+          "isRequired": false,
+          "default": "local-owner"
+        },
+        {
+          "name": "DATAFINDER_ALLOW_LOCAL_WRITES",
+          "description": "Enable confirmed local changes and background tasks",
+          "isRequired": false,
+          "default": "false"
+        },
+        {
+          "name": "DATAFINDER_ALLOW_UPSTREAM_WRITES",
+          "description": "Separately enable confirmed DataFinder metadata changes",
+          "isRequired": false,
+          "default": "false"
+        }
+      ]
+    }
+  ],
+  "repository": {
+    "url": "https://github.com/cyuanxv/datafinder-mcp",
+    "source": "github"
+  }
+}
