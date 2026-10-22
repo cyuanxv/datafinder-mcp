@@ -1,6 +1,6 @@
 {
   "name": "@cyuanxv/datafinder-mcp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Full 52-tool DataFinder MCP workbench with independent SQLite storage, background jobs and preview-confirmed changes.",
   "type": "module",
   "license": "MIT",

@@ -37,6 +37,7 @@ if(!worker){
  process.env.DATAFINDER_LOCAL_BASE_URL=`http://127.0.0.1:${http.address().port}`;
 }
 const {createRuntime}=await import('./runtime.mjs');
+const {dispatchFailed}=await import('./lib/schedules.mjs');
 let fetcher=fetch;
 if(process.env.DATAFINDER_DEMO==='true'){
  const {fixtureFetch}=await import('./fixture.mjs');fetcher=fixtureFetch;
@@ -47,7 +48,7 @@ process.once('SIGTERM',()=>close().then(()=>process.exit(0)));process.once('SIGI
 if(worker){
  const interval=Number(process.env.DATAFINDER_WORKER_INTERVAL_MS??60000);if(!Number.isInteger(interval)||interval<1000)throw Error('Worker interval must be at least 1000 ms');
  async function tick(){const id=randomUUID();runtime.db.raw.prepare('INSERT INTO standalone_workers(id,started,status,owner) VALUES(?,?,?,?)').run(id,Date.now(),'running',runtime.owner);
-  try{const result=await runtime.tick();const state=result.mapped?.status==='partial'||['partial','failed'].includes(result.processed?.state)?'task_failed':'completed';runtime.db.raw.prepare('UPDATE standalone_workers SET finished=?,status=? WHERE id=?').run(Date.now(),state,id);}
+  try{const result=await runtime.tick();const state=dispatchFailed(result)?'task_failed':'completed';runtime.db.raw.prepare('UPDATE standalone_workers SET finished=?,status=? WHERE id=?').run(Date.now(),state,id);}
   catch(e){runtime.db.raw.prepare('UPDATE standalone_workers SET finished=?,status=?,error_code=? WHERE id=?').run(Date.now(),'failed',e.code??'WORKER_FAILED',id);process.stderr.write('Background tick failed; see local worker history.\n');}
  }
  do{active=tick();await active;if(argv.includes('--once'))break;await new Promise(resolve=>{const stop=()=>{clearTimeout(timer);resolve();};const timer=setTimeout(()=>{process.removeListener('SIGTERM',stop);resolve();},interval);process.once('SIGTERM',stop);});}while(!closing);

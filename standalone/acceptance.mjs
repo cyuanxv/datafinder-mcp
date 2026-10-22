@@ -52,9 +52,19 @@ try{
  const nativeApply=value((await apply('native_metadata',{action:'apply',change_id:nativePreview.change_id,confirmation:nativePreview.confirmation})).saved);assert.equal(nativeApply.state,'applied');assert.equal(nativeApply.result.readback_verified,true);check('fictional_upstream_preview_apply_readback');
  await c.close();c=await connect(entry,written);const blockedPreview=value((await apply('native_metadata',nativeArgs)).saved);const blocked=(await apply('native_metadata',{action:'apply',change_id:blockedPreview.change_id,confirmation:blockedPreview.confirmation})).saved;assert.equal(blocked.structuredContent.error_code,'UPSTREAM_READ_ONLY');assert.equal(value(await c.call('native_metadata',{action:'change',change_id:blockedPreview.change_id})).state,'pending');check('upstream_write_default_denied_before_submission');
  assert.equal((await stat(file)).mode&0o777,0o600);check('database_permissions');
+ await c.close();c=await connect(entry,written);
+ const backgroundGood=value((await apply('cloud_query_jobs',{...submission,request_key:'unattended-good',tasks:[...submission.tasks,...submission.tasks]})).saved);
+ const backgroundMixed=value((await apply('cloud_query_jobs',{...submission,request_key:'unattended-mixed',tasks:[{...submission.tasks[0],key:'missing-fictional-template'},submission.tasks[0]]})).saved);
+ await c.close();check('foreground_disconnected_before_background_execution');
  const monitor=new DatabaseSync(file);const before=monitor.prepare('SELECT COUNT(*) n FROM standalone_workers').get().n;
  const continuous=spawn(process.execPath,[entry,'--worker'],{env:{PATH:process.env.PATH,...written,DATAFINDER_WORKER_INTERVAL_MS:'1000'},stdio:['ignore','ignore','pipe']});continuous.stderr.resume();
- let ticks=0;for(let i=0;i<50;i++){await new Promise(resolve=>setTimeout(resolve,100));ticks=monitor.prepare('SELECT COUNT(*) n FROM standalone_workers WHERE finished IS NOT NULL').get().n-before;if(ticks>=2)break;}
- const ended=new Promise(resolve=>continuous.once('exit',resolve));continuous.kill('SIGTERM');assert.equal(await ended,0);monitor.close();assert(ticks>=2);check('continuous_worker_polling_and_graceful_stop');
+ let ticks=0;for(let i=0;i<150;i++){await new Promise(resolve=>setTimeout(resolve,100));ticks=monitor.prepare('SELECT COUNT(*) n FROM standalone_workers WHERE finished IS NOT NULL').get().n-before;const states=monitor.prepare('SELECT state FROM cloud_jobs WHERE id IN (?,?)').all(backgroundGood.job_id,backgroundMixed.job_id);if(states.length===2&&states.every(r=>['completed','partial'].includes(r.state)))break;}
+ const ended=new Promise(resolve=>continuous.once('exit',resolve));continuous.kill('SIGTERM');assert.equal(await ended,0);assert(ticks>=4);
+ assert.equal(monitor.prepare('SELECT state FROM cloud_jobs WHERE id=?').get(backgroundGood.job_id).state,'completed');
+ assert.equal(monitor.prepare('SELECT state FROM cloud_jobs WHERE id=?').get(backgroundMixed.job_id).state,'partial');
+ assert(monitor.prepare("SELECT COUNT(*) n FROM standalone_workers WHERE status='task_failed'").get().n>=1);monitor.close();
+ check('continuous_worker_polling_and_graceful_stop');check('unattended_multistep_jobs_finish_without_foreground');check('failed_task_preserved_and_later_task_continues');
+ c=await connect(entry,env);const mixed=value(await c.call('cloud_query_jobs',{action:'read',job_id:backgroundMixed.job_id}));assert.deepEqual(mixed.results.map(r=>r.status),['failed','completed']);check('restart_readback_preserves_failure_and_success');
+ const finalLink=value(await c.call('export_aggregate_result',{kind:'job',id:backgroundGood.job_id,format:'csv'}));assert.equal((await fetch(finalLink.download_url)).status,200);check('export_after_worker_and_foreground_restart');
  result.status='pass';result.database=dir;await writeFile(out,JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({status:'pass',tools:52,checks:result.checks}));
 }finally{await c.close();}

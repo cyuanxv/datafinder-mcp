@@ -25,12 +25,15 @@ async function scheduleAction(api,input,owner){
  if(a.action==='list')return {items:await Promise.all(schedules.map(async s=>({...s,binding:await bindingStatus(api,owner,s,bindingCache)}))),dispatch:'requires_linked_cloud_schedule',external_notifications:false};
  const local=new Date(Date.now()+8*3600000),day=local.toISOString().slice(0,10),yesterday=new Date(local.getTime()-86400000).toISOString().slice(0,10),submitted=[];
  for(const s of schedules){if(!s.value.enabled||local.getUTCHours()<s.value.hour_shanghai)continue;
-  const job=await cloudJobs(api,{action:'submit',request_key:`schedule:${s.key}:${s.revision}:${day}`,tasks:[{kind:'inspection',rules:s.value.rules,start_date:yesterday,end_date:yesterday}]},owner);submitted.push({key:s.key,revision:s.revision,job_id:job.job_id,state:job.state});
+  try{const job=await cloudJobs(api,{action:'submit',request_key:`schedule:${s.key}:${s.revision}:${day}`,tasks:[{kind:'inspection',rules:s.value.rules,start_date:yesterday,end_date:yesterday}]},owner);submitted.push({key:s.key,revision:s.revision,job_id:job.job_id,state:job.state});}
+  catch(e){submitted.push({key:s.key,revision:s.revision,status:'failed',code:e instanceof QueryError?e.code:'DISPATCH_FAILED'});}
  }
  let mapped;try{mapped=await mappedPlans(api,{action:'tick'},owner);}catch(e){mapped={status:'partial',submitted:[],code:e instanceof QueryError?e.code:'DISPATCH_FAILED'};}
  const processed=await cloudJobs(api,{action:'process_next'},owner);
  return {business_date:day,submitted,mapped,processed,external_notifications:false,missed_days:'not_backfilled',note:'计划绑定规则版本；规则改变后任务失败并要求更新计划，不自动采用新口径。'};
 }
+
+export function dispatchFailed(result){return result.submitted?.some(s=>s.status==='failed')||result.mapped?.status==='partial'||['partial','failed'].includes(result.processed?.state);}
 
 export async function inspectionSchedules(api,input,owner){
  if(input.action!=='tick')return scheduleAction(api,input,owner);
@@ -38,8 +41,8 @@ export async function inspectionSchedules(api,input,owner){
  await db.prepare('INSERT INTO dispatch_runs(id,owner,started_at,status) VALUES(?,?,?,?)').bind(id,owner,started,'running').run();
  try{
   const result=await scheduleAction(api,input,owner),p=result.processed;
-  const status=result.mapped?.status==='partial'||['partial','failed'].includes(p.state)?'task_failed':'completed';
-  await db.prepare('UPDATE dispatch_runs SET finished_at=?,status=?,submitted_count=?,processed_job_id=? WHERE id=? AND owner=?').bind(Date.now(),status,result.submitted.length+(result.mapped?.submitted?.filter(x=>x.job_id).length??0),p.job_id??null,id,owner).run();
+  const status=dispatchFailed(result)?'task_failed':'completed';
+  await db.prepare('UPDATE dispatch_runs SET finished_at=?,status=?,submitted_count=?,processed_job_id=? WHERE id=? AND owner=?').bind(Date.now(),status,result.submitted.filter(s=>s.job_id).length+(result.mapped?.submitted?.filter(x=>x.job_id).length??0),p.job_id??null,id,owner).run();
   return {...result,dispatch_run_id:id,trigger_origin:'unverified',note:result.note+' 触发记录不区分手动与平台自动调用，自动运行须对照平台运行记录。'};
  }catch(e){
   await db.prepare('UPDATE dispatch_runs SET finished_at=?,status=?,error_code=? WHERE id=? AND owner=?').bind(Date.now(),'failed',e instanceof QueryError?e.code:'EXECUTION_FAILED',id,owner).run();throw e;
