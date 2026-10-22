@@ -1,5 +1,9 @@
 ## 0.2.0 - 2026-10-22
 
+## 0.2.2 — 2026-10-23
+
+Saved SQL adds explicit table/column selection and fixed previews. CTE output aliases become candidates. Unrelated dashboard lookup failures no longer block a visible source; incomplete catalogues fail explicitly. No SQL/date rewrites or upstream report changes. 459 automated tests and 36 standalone checks passed.
+
 ## 0.2.1
 
 - Preserve blank/invalid numeric filter drafts instead of silently converting to zero.

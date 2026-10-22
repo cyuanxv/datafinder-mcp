@@ -21,6 +21,11 @@ try{
  assert.equal(value(await c.call('get_connection_status')).read_only,true);
  assert.equal(value(await c.call('metric_dictionary',{action:'list'})).items.length,0);check('readonly_dictionary_read');
  const analysis=value(await c.call('run_analysis',{kind:'event',events:[{event_name:'demo_page_view',indicator:'events'}],start_date:'2020-01-01',end_date:'2020-01-02'}));assert.equal(analysis.status,'success');check('fictional_query');
+ const sqlRead=value(await c.call('saved_sql',{action:'read',report_id:'8900000000000000007'}));assert.deepEqual(sqlRead.data.column_candidates[0].columns,['day','revenue']);check('saved_sql_cte_column_candidates');
+ const sqlInput={report_id:'8900000000000000007',expected_version:sqlRead.data.version,count:10,selection:{table_index:0,columns:['day','revenue','missing']}};
+ const sqlPreview=value(await c.call('saved_sql',{...sqlInput,action:'preview'}));assert(sqlPreview.data.preview_hash);assert.equal(sqlPreview.status,'preview');check('saved_sql_readonly_fixed_preview');
+ const sqlResult=value(await c.call('saved_sql',{...sqlInput,action:'execute',preview_hash:sqlPreview.data.preview_hash}));assert.deepEqual(sqlResult.data.tables[0].rows,[['2020-01-01',0,null],['2020-01-02',-2.5,null]]);check('saved_sql_projection_preserves_rows_null_and_zero');
+ assert.equal((await c.call('saved_sql',{...sqlInput,action:'execute',count:11,preview_hash:sqlPreview.data.preview_hash})).structuredContent.error_code,'PREVIEW_CHANGED');check('saved_sql_changed_selection_rejected');
  const template={action:'save',key:'demo-template',name:'Demo template',expected_revision:0,confirmed:true,template:{kind:'analysis',config:{kind:'event',events:[{event_name:'demo_page_view',indicator:'events'}],granularity:'day'}}};
  const ro=await apply('query_templates',template);assert.equal(ro.saved.structuredContent.error_code,'READ_ONLY');check('readonly_blocks_confirmed_save');
  await c.close();c=await connect(entry,written);

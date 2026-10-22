@@ -115,7 +115,7 @@ export function createDataFinderServer(request,env,fetcher=fetch,options={}) {
  register('preview_virtual_change','预览虚拟对象变更','预览创建或修改虚拟事件/属性并保存15分钟有效的云端草稿；不会修改DataFinder。修改前应调用scan_virtual_dependencies并展示覆盖范围。必须向用户展示差异和影响，获得本次确认后才能apply。修改虚拟事件不支持description描述字段，传入即拒绝，其他字段也不会提交；创建及虚拟属性不受此限制。虚拟事件规则仅支持原始事件OR组合；属性使用受限标量SQL表达式；不支持删除。',changeShape,args=>previewChange(api,args,owner),true);
  register('apply_virtual_change','确认提交虚拟对象变更','仅在用户确认本次预览后调用；传preview返回的change_id和confirmation。仅提交一次，超时状态unknown时先读取对象核对，不自动重试。',{change_id:z.string().uuid(),confirmation:z.string().min(1).max(128)},args=>applyChange(api,args,owner),true);
  register('get_virtual_change','读取虚拟对象变更记录','读取当前用户的云端预览、执行状态与回读结果；unknown/applying不是成功，不得自动重发。',{change_id:z.string().uuid()},async({change_id})=>{const r=await getChange(api,change_id,owner);return {change_id:r.id,state:r.state,expires_at:new Date(r.expires_at).toISOString(),plan:JSON.parse(r.plan),result:r.result?JSON.parse(r.result):null};});
- register('saved_sql','读取与执行已保存SQL','仅支持项目可见看板关联的已保存SQL报表。先action=read读取定义和版本，再经用户查询请求action=execute并传expected_version。按保存配置读取原生结果，不接收任意SQL，不改写日期，不保证绕过缓存。',savedSqlShape,args=>savedSql(api,args));
+ register('saved_sql','读取与执行已保存SQL','仅支持项目可见看板关联的已保存SQL报表。先action=read读取定义和版本，再经用户查询请求action=execute并传expected_version。可用selection按明确table_index和columns选择返回列；先action=preview获取preview_hash，再execute原样回传；行数、列名或来源改变须重新预览。按保存配置读取原生结果，不接收任意SQL，不改写日期，不保证绕过缓存。',savedSqlShape,args=>savedSql(api,args));
  return server;
 }
 export async function mcpResponse(request,env,fetcher=fetch) {

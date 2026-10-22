@@ -6,7 +6,7 @@
 
 ## Choose your installation
 
-For the full **52-tool standalone package 0.2.1**, use [the complete English guide](../standalone/README.en.md). It requires **Node.js 24+**, runs over stdio, uses its own SQLite database and supports a separate background worker. Both write switches default to false. It does not need D1 or a cloud login gateway. Install with `npm install @cyuanxv/datafinder-mcp@0.2.1`, then follow the standalone client configuration guide.
+For the full **52-tool standalone package 0.2.2**, use [the complete English guide](../standalone/README.en.md). It requires **Node.js 24+**, runs over stdio, uses its own SQLite database and supports a separate background worker. Both write switches default to false. It does not need D1 or a cloud login gateway. Install with `npm install @cyuanxv/datafinder-mcp@0.2.2`, then follow the standalone client configuration guide.
 
 The browser demo below is a separate guided walkthrough with fictional data. The final cloud section describes the optional web workbench, not the standalone installation.
 
