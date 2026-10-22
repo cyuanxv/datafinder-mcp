@@ -24,7 +24,7 @@ jobs:
         run: node standalone/build.mjs
       - name: Install standalone dependencies
         working-directory: standalone/package
-        run: npm ci --ignore-scripts
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Accept all 52 tools
         working-directory: .
         run: node standalone/acceptance.mjs "$PWD/standalone/package/server.mjs" "$RUNNER_TEMP/datafinder-acceptance.json"
