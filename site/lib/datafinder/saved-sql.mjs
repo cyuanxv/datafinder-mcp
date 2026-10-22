@@ -3,6 +3,7 @@ import {APP,PROJECT,QueryError,reportId,parseLossless,assertScope} from './core.
 import {dashboardCatalog} from './dashboard.mjs';
 import {configHash} from './config-hash.mjs';
 import {sqlOutputColumns} from './sql-columns.mjs';
+import {savedSqlParameters} from './sql-parameters.mjs';
 const selectionSchema=z.object({table_index:z.number().int().min(0).max(99),columns:z.array(z.string().min(1).max(200).refine(v=>v.trim().length>0)).min(1).max(20).refine(v=>new Set(v).size===v.length,'列名不能重复')}).strict();
 export const savedSqlShape={report_id:z.string(),action:z.enum(['read','preview','execute']).default('read'),count:z.number().int().min(1).max(1000).default(100),expected_version:z.string().optional(),selection:selectionSchema.optional(),preview_hash:z.string().length(64).optional()};
 export const isSqlReport=r=>/^(sql|sql_analysis|sql_query|custom_sql|custom_sql_query|custom_sql_analysis|sql_custom_query|sql_custom_analysis)$/.test(r?.report_type??'');
@@ -55,18 +56,20 @@ export async function savedSql(api,input){
  const column_candidates=def.definitions.map((d,table_index)=>({table_index,display_number:table_index+1,columns:sqlOutputColumns(d.sql??d.content?.sql).map(c=>c.name),interpretation:'仅列名候选；可能含维度。未识别的列可按结果表头手动填写，不推断业务含义。'}));
  if(a.action==='read'){
   if(a.selection||a.preview_hash)throw new QueryError('INVALID_ARGUMENT','读取定义不接受选列或执行预览凭据。');
-  return api.output({data:{...def,column_candidates}},{status:'success',source_report_id:a.report_id,definition_status:'saved_sql',scope_description:'当前项目可见看板关联的已保存SQL定义'});
+  let parameter_support;try{parameter_support={status:'supported',...savedSqlParameters(def.definitions)};}catch(e){parameter_support={status:'unsupported',code:e.code,message:e.message};}
+  return api.output({data:{...def,column_candidates,parameter_support}},{status:'success',source_report_id:a.report_id,definition_status:'saved_sql',scope_description:'当前项目可见看板关联的已保存SQL定义'});
  }
  if(!a.expected_version||a.expected_version!==def.version)throw new QueryError('VERSION_CONFLICT','执行前先读取SQL定义，并传回该版本expected_version。');
- if(def.definitions.some(d=>Array.isArray(d.args)&&d.args.length))throw new QueryError('UNSUPPORTED_QUERY','暂不执行含动态参数的SQL；请先保存参数已固定的报表。');
+ const parameter_plan=savedSqlParameters(def.definitions);
  if(sensitive.test(JSON.stringify(def.definitions)))throw new QueryError('PRIVATE_QUERY','此保存SQL涉及受限用户明细字段，当前插件不执行。');
  if(a.selection&&a.selection.table_index>=def.definitions.length)throw new QueryError('SQL_SELECTION_INVALID','所选SQL定义序号不存在。');
- const preview={report_id:a.report_id,expected_version:def.version,count:a.count,selection:a.selection??null,date_mode:'saved_sql_only',note:'使用已保存SQL原日期；选列不改变行、日期或计算方式。未知列名与重复表头在结果返回后拒绝，不静默替换。'};
+ const preview={report_id:a.report_id,expected_version:def.version,count:a.count,selection:a.selection??null,date_mode:parameter_plan.mode,...(parameter_plan.mode==='saved_parameters'?{parameter_plan}:{}),note:'使用已保存SQL原日期；选列不改变行、日期或计算方式。未知列名与重复表头在结果返回后拒绝，不静默替换。'};
  const preview_hash=await configHash(preview);
  if(a.action==='preview')return api.output({data:{...preview,column_candidates,preview_hash},persisted:false,upstream_modified:false},{status:'preview',source_report_id:a.report_id});
- if((a.selection||a.preview_hash)&&a.preview_hash!==preview_hash)throw new QueryError('PREVIEW_CHANGED','选列、行数或来源版本已变化，请重新预览。');
+ if((a.selection||a.preview_hash||parameter_plan.mode==='saved_parameters')&&a.preview_hash!==preview_hash)throw new QueryError('PREVIEW_CHANGED','选列、行数、来源版本或动态日期已变化，请重新预览。');
  const r=await api.report(a.report_id,{count:a.count});
+ if(await configHash(savedSqlParameters(def.definitions))!==await configHash(parameter_plan))throw new QueryError('PREVIEW_CHANGED','查询跨过北京时间日期边界，请重新预览后执行。');
  const returned=r.data?.dsls?.map(d=>typeof d.dsl_content==='string'?parseLossless(d.dsl_content):d.dsl_content);
  if(!returned||await configHash(returned)!==def.version)throw new QueryError('VERSION_CONFLICT','执行返回的SQL定义已变化，请重新读取并确认版本。');
- return api.output({data:{...sqlResult(r.data,a.count,a.selection),definition_version:def.version,preview_hash},log_id:r.log_id},{status:'success',validation:{status:'verified',contract:'custom_sql_query_table_v3',business_semantics:'not_reviewed',freshness:'unknown'},source_report_id:a.report_id,execution_status:'upstream_response_received',query_method:'saved_sql_report_api',warnings:['已收到上游结果，数值口径、采样、截断和数据新鲜度需核对。']});
+ return api.output({data:{...sqlResult(r.data,a.count,a.selection),definition_version:def.version,preview_hash,...(parameter_plan.mode==='saved_parameters'?{parameter_plan}: {})},log_id:r.log_id},{status:'success',validation:{status:'verified',contract:'custom_sql_query_table_v3',business_semantics:'not_reviewed',freshness:'unknown'},source_report_id:a.report_id,execution_status:'upstream_response_received',query_method:'saved_sql_report_api',warnings:['已收到上游结果，数值口径、采样、截断和数据新鲜度需核对。']});
 }

@@ -1,6 +1,6 @@
 # DataFinder MCP — ChatGPT Analytics for Volcengine DataFinder
 
-[npm](https://www.npmjs.com/package/@cyuanxv/datafinder-mcp) · [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.cyuanxv%2Fdatafinder-mcp/versions/0.2.2)
+[npm](https://www.npmjs.com/package/@cyuanxv/datafinder-mcp) · [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.cyuanxv%2Fdatafinder-mcp/versions/0.2.3)
 
 [简体中文](README.md) | **English**
 
@@ -14,9 +14,11 @@ Built around the Model Context Protocol (MCP), the project provides **52 tool in
 
 > **Move from business questions to answers you can trace, check, and build on.**
 
+Saved SQL supports existing event-date bindings with a fixed preview. Re-preview after the Shanghai date or saved definition changes. Temporary argument overrides are unsupported. Cloud deployments can run independently of your personal computer; a locally installed npm worker requires its host to stay running.
+
 ## Install the full 52-tool edition
 
-The **0.2.2 standalone package** includes all 52 tools, its own SQLite database, persistent jobs and a separate background worker. Local and upstream writes are disabled by default; enabled changes still require preview, confirmation and readback. **Node.js 24+ is required.**
+The **0.2.3 standalone package** includes all 52 tools, its own SQLite database, persistent jobs and a separate background worker. Local and upstream writes are disabled by default; enabled changes still require preview, confirmation and readback. **Node.js 24+ is required.**
 Saved SQL supports output-column candidates, explicit table/column selection, and fixed previews before read-only execution. Saved dates and SQL stay unchanged. CTE output labels are candidates, not inferred business metrics.
 
 
@@ -28,7 +30,7 @@ Saved SQL supports output-column candidates, explicit table/column selection, an
 | Web workbench | Separate cloud deployment with D1 and an authentication gateway; needed for ChatGPT web's remote connection |
 | Browser demo below | Preset questions and fictional data; no MCP client connection |
 
-Install with `npm install @cyuanxv/datafinder-mcp@0.2.2`, or launch with `npx -y @cyuanxv/datafinder-mcp@0.2.2` after configuring the environment in the standalone guide.
+Install with `npm install @cyuanxv/datafinder-mcp@0.2.3`, or launch with `npx -y @cyuanxv/datafinder-mcp@0.2.3` after configuring the environment in the standalone guide.
 
 ## See it work. Then try it yourself.
 
