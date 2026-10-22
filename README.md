@@ -1,6 +1,6 @@
 # DataFinder MCP｜用 ChatGPT 分析火山引擎数据
 
-[npm](https://www.npmjs.com/package/@cyuanxv/datafinder-mcp) · [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.cyuanxv%2Fdatafinder-mcp/versions/0.2.2)
+[npm](https://www.npmjs.com/package/@cyuanxv/datafinder-mcp) · [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.cyuanxv%2Fdatafinder-mcp/versions/0.2.3)
 
 **简体中文** | [English](README.en.md)
 
@@ -16,9 +16,11 @@ DataFinder MCP 将火山引擎 DataFinder 接入 ChatGPT，让产品、运营和
 
 DataFinder MCP connects Volcengine DataFinder to ChatGPT for conversational analytics, retention analysis, conversion funnels, metric dictionaries, and report exports.
 
+支持查询已保存 SQL 中的事件日期参数：先预览预计日期，再执行原有报表；跨天或保存配置变化后需要重新预览。暂不支持临时覆盖参数。云端部署可在个人电脑离线时运行；本机 npm 安装的后台进程需要运行主机保持开机。
+
 ## 安装完整 52 工具版
 
-**0.2.2 独立安装包**包含完整 52 个工具、独立 SQLite 数据库、持久任务和单独运行的后台程序。默认关闭本地及上游修改，启用后仍需预览、确认和回读。**需要 Node.js 24 或更高版本。**
+**0.2.3 独立安装包**包含完整 52 个工具、独立 SQLite 数据库、持久任务和单独运行的后台程序。默认关闭本地及上游修改，启用后仍需预览、确认和回读。**需要 Node.js 24 或更高版本。**
 已保存 SQL 支持读取列名候选、选择一张结果表与明确列名，并固定预览后只读执行。日期仍沿用已保存 SQL，不自动改写；CTE 输出列只作候选，不推断业务含义。
 
 
@@ -30,7 +32,7 @@ DataFinder MCP connects Volcengine DataFinder to ChatGPT for conversational anal
 | 网页工作台 | 单独的云端部署、D1 和登录网关；ChatGPT 网页连接需要远程服务 |
 | 下方浏览器演示 | 预设问题和虚构数据，不建立 MCP 客户端连接 |
 
-安装：`npm install @cyuanxv/datafinder-mcp@0.2.2`。也可用 `npx -y @cyuanxv/datafinder-mcp@0.2.2` 启动；请先按独立安装教程配置环境变量。
+安装：`npm install @cyuanxv/datafinder-mcp@0.2.3`。也可用 `npx -y @cyuanxv/datafinder-mcp@0.2.3` 启动；请先按独立安装教程配置环境变量。
 
 ## 先看一遍，再亲手试试
 

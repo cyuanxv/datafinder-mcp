@@ -9,13 +9,15 @@
 
 [查看完整 52 工具清单](TOOLS.md)
 
+支持查询已保存 SQL 中的事件日期参数：先预览预计日期，再执行原有报表；跨天或保存配置变化后需要重新预览。暂不支持临时覆盖参数。云端部署可在个人电脑离线时运行；本机 npm 安装的后台进程需要运行主机保持开机。
+
 ## 安装和连接
 
 需要 **Node.js 24 或更高版本**（使用内置 SQLite）。在新目录里安装：
 
 ```sh
 npm init -y
-npm install @cyuanxv/datafinder-mcp@0.2.2
+npm install @cyuanxv/datafinder-mcp@0.2.3
 ```
 
 支持 stdio 的 MCP 客户端可按下面配置。将两处示例路径替换为本机真实路径：
@@ -35,7 +37,7 @@ npm install @cyuanxv/datafinder-mcp@0.2.2
 }
 ```
 
-也可使用 `npx -y @cyuanxv/datafinder-mcp@0.2.2` 启动。stdio 是客户端在本机启动的连接方式；ChatGPT 网页需要单独部署的远程服务，本次本地验收不等于 ChatGPT 网页原生连接验收。
+也可使用 `npx -y @cyuanxv/datafinder-mcp@0.2.3` 启动。stdio 是客户端在本机启动的连接方式；ChatGPT 网页需要单独部署的远程服务，本次本地验收不等于 ChatGPT 网页原生连接验收。
 
 ## 先用虚构数据试用
 
@@ -132,7 +134,7 @@ node standalone/acceptance.mjs /absolute/path/to/installed/server.mjs /absolute/
 
 ## Registry 登记
 
-`server.json` 对应 `io.github.cyuanxv/datafinder-mcp` 0.2.2，不包含私人远程服务地址。登记使用 npm 安装包，收录不等于自动上架 ChatGPT。
+`server.json` 对应 `io.github.cyuanxv/datafinder-mcp` 0.2.3，不包含私人远程服务地址。登记使用 npm 安装包，收录不等于自动上架 ChatGPT。
 
 官方流程：https://modelcontextprotocol.io/registry/quickstart
 

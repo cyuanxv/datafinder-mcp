@@ -1,6 +1,6 @@
 # DataFinder MCP：新手安装与排错指南
 
-适用：独立安装版 0.2.2｜核对日期：2026-10-22
+适用：独立安装版 0.2.3｜核对日期：2026-10-22
 
 [English](TROUBLESHOOTING.en.md) · [返回项目首页](../README.md) · [观看演示视频](https://github.com/user-attachments/assets/9ee2402d-c30d-40fc-82c7-02d2f36ef238)
 
@@ -49,11 +49,11 @@ Windows PowerShell 查看路径：
 mkdir datafinder-mcp-demo
 cd datafinder-mcp-demo
 npm init -y
-npm install @cyuanxv/datafinder-mcp@0.2.2
+npm install @cyuanxv/datafinder-mcp@0.2.3
 npm ls @cyuanxv/datafinder-mcp
 ```
 
-最后一条命令应显示 `@cyuanxv/datafinder-mcp@0.2.2`。只安装和运行这个公开包，不需要 npm 发布权限，也不需要作者的账号或密钥。
+最后一条命令应显示 `@cyuanxv/datafinder-mcp@0.2.3`。只安装和运行这个公开包，不需要 npm 发布权限，也不需要作者的账号或密钥。
 
 ## 4. 配置客户端，先开演示模式
 
@@ -80,7 +80,7 @@ Windows 路径可以使用正斜杠，例如 `C:/Users/your-name/datafinder-mcp-
 
 保存后，断开并重新连接 MCP 服务；必要时退出并重新打开客户端。应能发现 **52 个工具**。客户端可能只展示部分常用工具，以完整工具发现结果为准。
 
-也可以把客户端启动命令配置成 `npx -y @cyuanxv/datafinder-mcp@0.2.2`，同时保留演示模式和数据库环境变量。首次使用 npx 需要下载依赖；新手排错时，优先使用上面已安装包的绝对路径。
+也可以把客户端启动命令配置成 `npx -y @cyuanxv/datafinder-mcp@0.2.3`，同时保留演示模式和数据库环境变量。首次使用 npx 需要下载依赖；新手排错时，优先使用上面已安装包的绝对路径。
 
 不要把“在终端运行命令后没有输出”直接当作失败：stdio 服务本来就在等客户端发请求。不要随意向它的输入窗口粘贴聊天内容。
 

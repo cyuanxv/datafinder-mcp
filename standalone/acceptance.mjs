@@ -26,6 +26,10 @@ try{
  const sqlPreview=value(await c.call('saved_sql',{...sqlInput,action:'preview'}));assert(sqlPreview.data.preview_hash);assert.equal(sqlPreview.status,'preview');check('saved_sql_readonly_fixed_preview');
  const sqlResult=value(await c.call('saved_sql',{...sqlInput,action:'execute',preview_hash:sqlPreview.data.preview_hash}));assert.deepEqual(sqlResult.data.tables[0].rows,[['2020-01-01',0,null],['2020-01-02',-2.5,null]]);check('saved_sql_projection_preserves_rows_null_and_zero');
  assert.equal((await c.call('saved_sql',{...sqlInput,action:'execute',count:11,preview_hash:sqlPreview.data.preview_hash})).structuredContent.error_code,'PREVIEW_CHANGED');check('saved_sql_changed_selection_rejected');
+ const dynRead=value(await c.call('saved_sql',{action:'read',report_id:'8900000000000000008'}));assert.equal(dynRead.data.parameter_support.mode,'saved_parameters');check('dynamic_saved_binding_discovery');
+ const dynInput={report_id:'8900000000000000008',expected_version:dynRead.data.version,count:10};
+ assert.equal((await c.call('saved_sql',{...dynInput,action:'execute'})).structuredContent.error_code,'PREVIEW_CHANGED');check('dynamic_query_requires_fixed_preview');
+ const dynPreview=value(await c.call('saved_sql',{...dynInput,action:'preview'}));assert.equal(dynPreview.data.parameter_plan.tables[0].bindings[0].range_status,'expected_from_saved_binding_not_upstream_verified');const dynResult=value(await c.call('saved_sql',{...dynInput,action:'execute',preview_hash:dynPreview.data.preview_hash}));assert.equal(dynResult.data.parameter_plan.mode,'saved_parameters');check('dynamic_saved_binding_execution');
  const template={action:'save',key:'demo-template',name:'Demo template',expected_revision:0,confirmed:true,template:{kind:'analysis',config:{kind:'event',events:[{event_name:'demo_page_view',indicator:'events'}],granularity:'day'}}};
  const ro=await apply('query_templates',template);assert.equal(ro.saved.structuredContent.error_code,'READ_ONLY');check('readonly_blocks_confirmed_save');
  await c.close();c=await connect(entry,written);
