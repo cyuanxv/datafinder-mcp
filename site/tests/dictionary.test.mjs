@@ -32,3 +32,26 @@ test('concurrent saves retain one new version and stale confirmations cannot ove
 test('legacy read tool returns v2 checks without losing business status',async()=>{const {readRecords}=await import('../lib/datafinder/governance.mjs');const a=mock();await save(a,'v2',await draft(a));const r=await readRecords(a,{kind:'metric',key:'v2'},'owner');assert.equal(r.source_status,'unchanged');assert.equal(r.value.default_report_id,sqlid);});
 
 test('SQL column preview handles comments, literals and nested commas without inferring semantics',async()=>{const {sqlOutputColumns}=await import('../lib/datafinder/sql-columns.mjs');const c=sqlOutputColumns("SELECT event_date, round(sum(x),2) AS revenue, 'from, AS fake' AS note FROM events -- select bad");assert.deepEqual(c.map(x=>x.name),['event_date','revenue','note']);assert.ok(c.every(x=>x.kind==='sql_output_candidate'));assert.deepEqual(sqlOutputColumns('SELECT * FROM events'),[]);assert.deepEqual(sqlOutputColumns('WITH x AS (SELECT 1) SELECT * FROM x'),[]);assert.deepEqual(sqlOutputColumns("SELECT 'unterminated FROM events"),[]);});
+
+import {queryWorkflow} from '../lib/datafinder/query-workflow.mjs';
+test('SQL dictionary binds exact table/columns, previews, executes and continues without imports or upstream writes',async()=>{
+ const a=mock();a.output=r=>r;a.report=async()=>({data:{dsls:a.reports[1].dsls.map(d=>({...d,data:{table_head:['users'],table_body:[[12]]}}))}});
+ const m=await draft(a);m.recommendation='ready';m.sources[0].sql_selection={table_index:0,columns:['users']};
+ await save(a,'sql-metric',m);const input={definition:{dictionary:{key:'sql-metric',revision:1}}};
+ const p=await queryWorkflow(a,input,'owner');assert.deepEqual(p.definition.saved_sql.selection,m.sources[0].sql_selection);assert.equal(p.definition.start_date,undefined);
+ const r=await queryWorkflow(a,{definition:p.definition,execute:true,preview_hash:p.preview_hash},'owner');assert.deepEqual(r.output.data.tables[0].rows,[[12]]);
+ const next=await queryWorkflow(a,{definition:p.definition,changes:{saved_sql:{count:20}}},'owner');assert.equal(next.definition.saved_sql.count,20);assert.deepEqual(next.definition.dictionary,p.definition.dictionary);
+ await assert.rejects(queryWorkflow(a,{definition:next.definition,execute:true,preview_hash:p.preview_hash},'owner'),e=>e.code==='PREVIEW_CHANGED');
+ const out=await queryWorkflow(a,{definition:next.definition,execute:true,preview_hash:next.preview_hash},'owner');assert.equal(out.upstream_modified,false);
+ const rec=await queryWorkflow(a,{operation:'save',definition:next.definition,session_key:'sql-query',expected_revision:0,confirmed:true,preview_hash:next.preview_hash},'owner');assert.equal(rec.readback_verified,true);
+ const restored=await queryWorkflow(a,{operation:'read',session_key:'sql-query'},'owner');assert.deepEqual(restored.value.definition,next.definition);
+ for(const changes of [{saved_sql:{selection:{table_index:0,columns:['other']}}},{start_date:'2020-01-01'},{config:{filters:[]}}])await assert.rejects(queryWorkflow(a,{definition:p.definition,changes},'owner'));
+ await assert.rejects(queryWorkflow(a,{definition:p.definition},'other'),e=>e.code==='NOT_FOUND');
+ await save(a,'sql-metric',{...m,recommendation:'paused'},1);await assert.rejects(queryWorkflow(a,{definition:p.definition},'owner'),e=>e.code==='VERSION_CONFLICT');
+});
+test('SQL binding previews reject ambiguous, wrong-type, absent columns and preserve legacy unbound records',async()=>{
+ const a=mock(),m=await draft(a);
+ for(const sql_selection of [{table_index:0,columns:['missing']},{table_index:1,columns:['users']}])await assert.rejects(run(a,{action:'save',key:'x',expected_revision:0,metric:{...m,sources:[{...m.sources[0],sql_selection}]}}),e=>e.code==='SQL_SELECTION_INVALID');
+ await save(a,'old-sql',{...m,recommendation:'ready'});await assert.rejects(queryWorkflow(a,{definition:{dictionary:{key:'old-sql',revision:1}}},'owner'),e=>e.code==='SQL_BINDING_REQUIRED');
+ assert.equal((await run(a,{action:'list'})).counts.all,1);
+});

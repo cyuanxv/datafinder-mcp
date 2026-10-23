@@ -1,9 +1,11 @@
 # DataFinder MCP — 52 tools, independent storage and background jobs
 
+Saved SQL metrics now support explicit dictionary table/column bindings and unified preview → execution → row-limit follow-ups. Saved dates are preserved; temporary date/filter overrides are not supported. Legacy metrics require a reviewed binding before execution.
+
 
 [简体中文](README.md) | **English**
 
-The standalone **0.2.3** package exposes the same **52 MCP tool names** as the cloud workbench: analytics, metric dictionaries, mappings, templates, follow-up conditions, jobs, inspections, archives, and confirmed metadata changes. It uses your own SQLite database and DataFinder account. No connection to the author's private service is required.
+The standalone **0.2.4** package exposes the same **52 MCP tool names** as the cloud workbench: analytics, metric dictionaries, mappings, templates, follow-up conditions, jobs, inspections, archives, and confirmed metadata changes. It uses your own SQLite database and DataFinder account. No connection to the author's private service is required.
 
 [View all 52 tools](TOOLS.md). Vendor subscriptions and API permissions still apply. For example, user-tag APIs require the relevant CDP entitlement. Unsupported upstream operations are rejected. The standalone package does not include the cloud management website.
 
@@ -15,7 +17,7 @@ Use **Node.js 24+**, which provides the built-in SQLite runtime. In a new direct
 
 ```sh
 npm init -y
-npm install @cyuanxv/datafinder-mcp@0.2.3
+npm install @cyuanxv/datafinder-mcp@0.2.4
 ```
 
 For an MCP client that launches stdio servers, replace the example paths below with absolute paths on your computer:
@@ -35,7 +37,7 @@ For an MCP client that launches stdio servers, replace the example paths below w
 }
 ```
 
-Alternatively, launch with `npx -y @cyuanxv/datafinder-mcp@0.2.3`. A stdio client starts this executable locally. ChatGPT web requires a separately deployed authenticated remote server; local protocol acceptance is not ChatGPT web acceptance.
+Alternatively, launch with `npx -y @cyuanxv/datafinder-mcp@0.2.4`. A stdio client starts this executable locally. ChatGPT web requires a separately deployed authenticated remote server; local protocol acceptance is not ChatGPT web acceptance.
 
 ## Try fictional data first
 
@@ -132,6 +134,6 @@ The harness creates a separate test directory beside the result file. It checks 
 
 ## MCP Registry
 
-`server.json` identifies `io.github.cyuanxv/datafinder-mcp` version 0.2.3 and contains no private remote-service URL. The entry uses the npm package. Registry inclusion does not automatically list the project in ChatGPT.
+`server.json` identifies `io.github.cyuanxv/datafinder-mcp` version 0.2.4 and contains no private remote-service URL. The entry uses the npm package. Registry inclusion does not automatically list the project in ChatGPT.
 
 [Official Registry quickstart](https://modelcontextprotocol.io/registry/quickstart)
