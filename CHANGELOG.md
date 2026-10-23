@@ -1,3 +1,7 @@
+## Unreleased — web UI
+
+Correct report row-limit follow-ups, hide unsupported controls, and reject invalid counts before submission. MCP runtime remains 0.2.4.
+
 ## 0.2.0 - 2026-10-22
 
 ## 0.2.4
