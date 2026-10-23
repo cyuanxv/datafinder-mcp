@@ -6,3 +6,5 @@
 - 492 offline tests, TypeScript and production build passed. Fixtures contain no live tenant data.
 - This is a web UI patch; MCP tool definitions and runtime query behavior are unchanged. Published npm/Registry version remains 0.2.4.
 - Private-service result checks are documented separately and are not included in public source. No production metric import, data deletion or upstream report modification.
+
+Generated standalone package: all 52 tools and 44 integration checks passed; no npm or Registry publication was needed for this UI-only patch.
