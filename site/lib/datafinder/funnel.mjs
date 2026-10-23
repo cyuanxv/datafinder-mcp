@@ -12,7 +12,9 @@ export function funnelPlan(input,wide){
  if((plan.range.end_time+1+seconds)*1000>Date.now())throw new QueryError('IMMATURE_FUNNEL','结束日期后的转化窗口尚未完整结束，请提前结束日期或缩短窗口。');
  plan.dsl.content.query_type='funnel';
  plan.dsl.content.queries=[a.steps.map((e,i)=>({event_name:e.event_name,event_type:e.event_type,show_label:String(i+1),groups_v2:[],filters:e.filters.length?[{expression:expression(e.filters)}]:[]}))];
- plan.dsl.content.option={use_sample_data:false,refresh_cache:false,fusion:false,analysis_subject:{},is_parallel:false,statistics_mode:0,add_window_period:true,window_period:window.value,window_period_type:window.unit,window_type:1};
+ // Use the documented rolling-window contract. window_type=1 overrides the duration
+ // (10 min and 1 day collapsed to the same result); console cross-check 2026-10-23.
+ plan.dsl.content.option={use_sample_data:false,refresh_cache:false,fusion:false,analysis_subject:{},is_parallel:false,statistics_mode:0,window_period:window.value,window_period_type:window.unit};
  return {...plan,args:a,window:{...window,seconds,mode:'rolling'}};
 }
 export function parseFunnel(raw,plan){
@@ -38,5 +40,5 @@ export async function runFunnel(api,input,stepFilters=[]){
   const catalogs={};for(const type of new Set(p.args.steps.map(s=>s.event_type))){const c=await api.request('POST',`/openapi/v1/metadata/${APP}/list/${type==='virtual'?'virtual_events':'events'}`,{});if(!Array.isArray(c.data))throw new QueryError('UNVERIFIED_CONTRACT','漏斗事件别名目录无法核验。');catalogs[type]=c.data;}
   p.event_labels=p.args.steps.map((s,i)=>{if(header[i]===s.event_name)return s.event_name;const matches=catalogs[s.event_type].filter(x=>x.name===s.event_name);if(matches.length!==1||typeof matches[0].show_name!=='string'||header[i]!==matches[0].show_name)throw new QueryError('UNVERIFIED_CONTRACT','漏斗步骤标签与事件元数据不匹配。');return matches[0].show_name;});
  }
- return api.output({data:{steps:parseFunnel(r.data,p),definition:p.dsl.content},log_id:r.log_id},{status:p.args.window?'incomplete':'success',validation:p.args.window?'window_contract_unverified':'legacy_day_window',resolved_time_range:p.range,query_method:'ordered_user_funnel',window_days:p.window.seconds/86400,window:p.window,conversion_observation_end:new Date((p.range.end_time+p.window.seconds)*1000).toISOString(),sampling:'unknown',data_freshness:'unknown',warnings:[...(p.args.window?['自定义窗口参数已送达上游，但不同窗口样例结果相同；窗口是否生效尚待控制台对照。观察截止时间为请求口径，不证明上游按此计算。']:[]),'首步发生在所选日期内，后续步骤须有序且在首步后的指定时长内完成；观察范围会延伸到结束日期之后。','分母为原生有序漏斗人数，不等于独立事件UV；零分母转化率为未知。','窗口是滚动时长，不代表当天截止；仅有序、去重人数漏斗，未独立确认采样与新鲜度。']});
+ return api.output({data:{steps:parseFunnel(r.data,p),definition:p.dsl.content},log_id:r.log_id},{status:'success',validation:'verified_rolling_window',resolved_time_range:p.range,query_method:'ordered_user_funnel',window_days:p.window.seconds/86400,window:p.window,conversion_observation_end:new Date((p.range.end_time+p.window.seconds)*1000).toISOString(),sampling:'unknown',data_freshness:'unknown',warnings:['首步发生在所选日期内，后续步骤须有序且在首步后的指定时长内完成；观察范围会延伸到结束日期之后。','分母为原生有序漏斗人数，不等于独立事件UV；零分母转化率为未知。','窗口是滚动时长，不代表当天截止；仅有序、去重人数漏斗，未独立确认采样与新鲜度。']});
 }

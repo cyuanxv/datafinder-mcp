@@ -19,7 +19,7 @@ SQL 指标现可在字典中绑定明确的表和列，统一完成预览、查�
 
 ```sh
 npm init -y
-npm install @cyuanxv/datafinder-mcp@0.2.4
+npm install @cyuanxv/datafinder-mcp@0.2.5
 ```
 
 支持 stdio 的 MCP 客户端可按下面配置。将两处示例路径替换为本机真实路径：
@@ -39,7 +39,7 @@ npm install @cyuanxv/datafinder-mcp@0.2.4
 }
 ```
 
-也可使用 `npx -y @cyuanxv/datafinder-mcp@0.2.4` 启动。stdio 是客户端在本机启动的连接方式；ChatGPT 网页需要单独部署的远程服务，本次本地验收不等于 ChatGPT 网页原生连接验收。
+也可使用 `npx -y @cyuanxv/datafinder-mcp@0.2.5` 启动。stdio 是客户端在本机启动的连接方式；ChatGPT 网页需要单独部署的远程服务，本次本地验收不等于 ChatGPT 网页原生连接验收。
 
 ## 先用虚构数据试用
 
@@ -136,7 +136,7 @@ node standalone/acceptance.mjs /absolute/path/to/installed/server.mjs /absolute/
 
 ## Registry 登记
 
-`server.json` 对应 `io.github.cyuanxv/datafinder-mcp` 0.2.4，不包含私人远程服务地址。登记使用 npm 安装包，收录不等于自动上架 ChatGPT。
+`server.json` 对应 `io.github.cyuanxv/datafinder-mcp` 0.2.5，不包含私人远程服务地址。登记使用 npm 安装包，收录不等于自动上架 ChatGPT。
 
 官方流程：https://modelcontextprotocol.io/registry/quickstart
 

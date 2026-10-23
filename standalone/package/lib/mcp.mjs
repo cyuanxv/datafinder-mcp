@@ -85,7 +85,7 @@ export function createDataFinderServer(request,env,fetcher=fetch,options={}) {
 
  register('check_tracking_health','手动埋点健康检查','查询指定事件次数与区间人数，对比前几周相同星期区间。最多7天、5个事件；返回异常线索而非故障结论，不自动通知。',healthShape,args=>checkTrackingHealth(api,args));
  register('check_property_quality','属性质量统计','按事件次数统计属性null、空字符串，以及明确字符串白名单以外的非空值。可用numeric_bounds检查原始数值属性的含边界范围，required_when限定必填条件与比例分母；白名单与数值规则不可混用。不读取用户明细。',qualityShape,args=>checkPropertyQuality(api,args));
- register('run_funnel','自由有序漏斗','2至8步去重人数有序漏斗；window={value,unit:minute/hour/day}指定滚动窗口，最长7天；兼容window_days，两者不能同时传。新window参数生效语义待控制台确认，返回incomplete，不作为已验收口径。允许后续步骤延伸到结束日期之后，未成熟窗口拒绝执行。仅聚合、不保存报表。',funnelShape,args=>runFunnel(api,args));
+ register('run_funnel','自由有序漏斗','2至8步去重人数有序漏斗；window={value,unit:minute/hour/day}指定滚动窗口，最长7天；兼容window_days，两者不能同时传。分钟/小时/天滚动窗口已完成控制台对照；不支持当天截止。允许后续步骤延伸到结束日期之后，未成熟窗口拒绝执行。仅聚合、不保存报表。',funnelShape,args=>runFunnel(api,args));
  register('list_user_properties','检索用户属性目录','读取用户属性名、类型、展示名与说明，不读取用户值。限配置的应用，返回目录快照的本地分页及完整性边界。',userPropertiesShape,args=>listUserProperties(api,args));
  register('compare_versions','版本回归对比','在相同日期和相同显式渠道/平台等controls下，对比新旧版本的事件次数、区间人数、人均次数，可同时传funnel_steps与quality。版本用原始common_param属性。只做描述性对照，不推断因果；没有controls时未控制流量混杂。',regressionShape,args=>compareVersions(api,args));
  register('run_distribution','数值分布与用户成分','user_cumulative_measure按每用户累计数值属性分桶，需要event、event_param property和非负递增boundaries；不转换单位、不去重订单。user_frequency按每个日或区间内累计事件次数统计用户分布，需要event和正整数boundaries、不传property，分桶与独立UV校验，零次用户不包含。numeric_event_distribution按单次事件属性分桶统计事件次数；必须指定递增边界，空值单列并校验守恒。成分分析按用户属性返回人数，上游日期与分母未独立验证时为incomplete，不能据此下结论。',distributionShape,a=>runDistribution(api,a));

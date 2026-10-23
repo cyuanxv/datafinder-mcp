@@ -3,12 +3,12 @@
   "name": "io.github.cyuanxv/datafinder-mcp",
   "title": "DataFinder MCP",
   "description": "DataFinder analytics with 52 tools, metric dictionaries, persistent jobs and confirmed changes.",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@cyuanxv/datafinder-mcp",
-      "version": "0.2.4",
+      "version": "0.2.5",
       "transport": {
         "type": "stdio"
       },

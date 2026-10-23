@@ -2,7 +2,7 @@
 
 Saved SQL metrics now support explicit dictionary table/column bindings and unified preview → execution → row-limit follow-ups. Saved dates are preserved; temporary date/filter overrides are not supported. Legacy metrics require a reviewed binding before execution.
 
-[npm](https://www.npmjs.com/package/@cyuanxv/datafinder-mcp) · [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.cyuanxv%2Fdatafinder-mcp/versions/0.2.4)
+[npm](https://www.npmjs.com/package/@cyuanxv/datafinder-mcp) · [MCP Registry](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.cyuanxv%2Fdatafinder-mcp/versions/0.2.5)
 
 [简体中文](README.md) | **English**
 
@@ -20,7 +20,7 @@ Saved SQL supports existing event-date bindings with a fixed preview. Re-preview
 
 ## Install the full 52-tool edition
 
-The **0.2.4 standalone package** includes all 52 tools, its own SQLite database, persistent jobs and a separate background worker. Local and upstream writes are disabled by default; enabled changes still require preview, confirmation and readback. **Node.js 24+ is required.**
+The **0.2.5 standalone package** includes all 52 tools, its own SQLite database, persistent jobs and a separate background worker. Local and upstream writes are disabled by default; enabled changes still require preview, confirmation and readback. **Node.js 24+ is required.**
 Saved SQL supports output-column candidates, explicit table/column selection, and fixed previews before read-only execution. Saved dates and SQL stay unchanged. CTE output labels are candidates, not inferred business metrics.
 
 
@@ -32,7 +32,7 @@ Saved SQL supports output-column candidates, explicit table/column selection, an
 | Web workbench | Separate cloud deployment with D1 and an authentication gateway; needed for ChatGPT web's remote connection |
 | Browser demo below | Preset questions and fictional data; no MCP client connection |
 
-Install with `npm install @cyuanxv/datafinder-mcp@0.2.4`, or launch with `npx -y @cyuanxv/datafinder-mcp@0.2.4` after configuring the environment in the standalone guide.
+Install with `npm install @cyuanxv/datafinder-mcp@0.2.5`, or launch with `npx -y @cyuanxv/datafinder-mcp@0.2.5` after configuring the environment in the standalone guide.
 
 ## See it work. Then try it yourself.
 
@@ -176,3 +176,5 @@ Connect to discuss DataFinder, conversational analytics with ChatGPT, and MCP to
 [Full standalone MCP package (52 tools, SQLite storage and background jobs): installation, configuration and Registry metadata](standalone/README.en.md)
 
 [Account verification and release checklist](docs/RELEASING.en.md)
+
+[Analysis acceptance boundaries / 分析验收范围](docs/ANALYSIS-CONTRACTS.md)
