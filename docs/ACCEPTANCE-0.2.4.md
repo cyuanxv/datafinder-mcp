@@ -7,4 +7,4 @@
 - Live private-service checks compared three saved reports with original read-only responses; the complex report also matched all seven output columns. No tenant data or identifiers are included here.
 - No production metric imports or upstream report modifications were performed.
 
-Private cloud deployment and native MCP preview/execution/follow-up passed; publication readback is recorded after release.
+Private cloud deployment and native MCP preview/execution/follow-up passed; npm 0.2.4 public metadata and integrity matched the published tarball; a fresh public npm installation passed all 52 tools and 44 integration checks. Registry 0.2.4 read back active with isLatest=true.
