@@ -1,5 +1,11 @@
 ## 0.2.0 - 2026-10-22
 
+## 0.2.4
+
+- Bind dictionary metrics to explicit saved SQL tables and columns, then preview, execute and continue with a row-limit follow-up in one workflow. Legacy records are preserved.
+- Permit recognized aggregate SQL with internal identity aliases while retaining lineage checks and full-result privacy screening. Unknown sensitive syntax stays blocked.
+- Correct stale saved-parameter guidance; source versions, immutable previews, saved date logic and unknown cache freshness remain explicit.
+
 ## 0.2.3 — 2026-10-23
 
 Support previewed replay of saved event-date SQL bindings; stale previews and unsupported bindings fail closed. SQL and upstream reports remain unchanged. Temporary argument overrides remain unsupported.

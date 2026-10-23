@@ -4,7 +4,7 @@ const profile={name:'demo_property',show_name:'Demo property',description:'Ficti
 export async function fixtureFetch(input,init={}){
  const url=new URL(input),path=url.pathname.replace(/^\/datafinder/,'');let body={};try{body=JSON.parse(init.body??'{}');}catch{}
  const board='8900000000000000006',report='8900000000000000007';
- const sql={version:3,app_ids:[Number(APP)],sql:'with totals as (select 1 as n from events) select day, n as revenue from totals',args:[]};
+ const sql={version:3,app_ids:[Number(APP)],sql:'with totals as (select hash_uid as uid, event_date as day, 1 as n from events) select day, sum(n) as revenue from totals group by day',args:[]};
  const dynamicReport='8900000000000000008',dynamicSql={...sql,sql:'select day, count() as revenue from events where ${event_date:date1} group by day',args:[{arg_type:'event_date',property_value_type:'datetime',use_timezone:true,placeholder:'event_date:date1',property_operation:'',property_values:[{granularity:'day',type:'past_range',spans:[{type:'past',past:{amount:7,unit:'day'}},{type:'past',past:{amount:1,unit:'day'}}],week_start:1}]}]};
  if(path===`/openapi/v1/${APP}/dashboards/all`)return Response.json({code:200,data:[{app_id:Number(PROJECT),dashboard_id:board,name:'Fictional SQL board'}]});
  if(path===`/openapi/v1/${APP}/dashboards/${board}/reports`)return Response.json({code:200,data:{[board]:{reports:[[report,sql],[dynamicReport,dynamicSql]].map(([id,definition])=>({app_id:Number(PROJECT),report_id:id,report_name:'Fictional saved SQL',report_type:'custom_sql_query',dsls:[{app_id:Number(PROJECT),dsl_content:definition}]}))}}});

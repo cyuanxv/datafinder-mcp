@@ -3,8 +3,9 @@ import {APP,PROJECT,QueryError,reportId,parseLossless,assertScope} from './core.
 import {dashboardCatalog} from './dashboard.mjs';
 import {configHash} from './config-hash.mjs';
 import {sqlOutputColumns} from './sql-columns.mjs';
+import {assertSqlPrivacy} from './sql-privacy.mjs';
 import {savedSqlParameters} from './sql-parameters.mjs';
-const selectionSchema=z.object({table_index:z.number().int().min(0).max(99),columns:z.array(z.string().min(1).max(200).refine(v=>v.trim().length>0)).min(1).max(20).refine(v=>new Set(v).size===v.length,'列名不能重复')}).strict();
+export const selectionSchema=z.object({table_index:z.number().int().min(0).max(99),columns:z.array(z.string().min(1).max(200).refine(v=>v.trim().length>0)).min(1).max(20).refine(v=>new Set(v).size===v.length,'列名不能重复')}).strict();
 export const savedSqlShape={report_id:z.string(),action:z.enum(['read','preview','execute']).default('read'),count:z.number().int().min(1).max(1000).default(100),expected_version:z.string().optional(),selection:selectionSchema.optional(),preview_hash:z.string().length(64).optional()};
 export const isSqlReport=r=>/^(sql|sql_analysis|sql_query|custom_sql|custom_sql_query|custom_sql_analysis|sql_custom_query|sql_custom_analysis)$/.test(r?.report_type??'');
 export function parseSavedSqlDefinitions(report,wide=false){
@@ -32,7 +33,7 @@ export async function savedSqlDefinition(api,id){
  }
  throw new QueryError(incomplete?'INCOMPLETE_CATALOG':'NOT_FOUND',incomplete?'部分看板目录读取不完整，暂时不能确定此SQL报表是否存在。':'当前项目可见看板目录未找到此 SQL 报表；请先将已保存 SQL 关联到看板。');
 }
-const sensitive=/(^|[^\w])(user_id|user_unique_id|device_id|distinct_id|uid|email|phone|mobile|message_content|chat_content)([^\w]|$)/i;
+const sensitive=/(^|[^\w])(user_id|user_unique_id|device_id|distinct_id|hash_uid|uid|email|phone|mobile|message_content|chat_content)([^\w]|$)/i;
 export function sqlResult(data,count,selection){
  if(selection)selection=selectionSchema.parse(selection);
  if(!Array.isArray(data?.dsls)||!data.dsls.length)throw new QueryError('UNVERIFIED_CONTRACT','SQL 报表未返回可识别的数据容器。');
@@ -61,7 +62,7 @@ export async function savedSql(api,input){
  }
  if(!a.expected_version||a.expected_version!==def.version)throw new QueryError('VERSION_CONFLICT','执行前先读取SQL定义，并传回该版本expected_version。');
  const parameter_plan=savedSqlParameters(def.definitions);
- if(sensitive.test(JSON.stringify(def.definitions)))throw new QueryError('PRIVATE_QUERY','此保存SQL涉及受限用户明细字段，当前插件不执行。');
+ for(const d of def.definitions)assertSqlPrivacy(d.sql??d.content?.sql);
  if(a.selection&&a.selection.table_index>=def.definitions.length)throw new QueryError('SQL_SELECTION_INVALID','所选SQL定义序号不存在。');
  const preview={report_id:a.report_id,expected_version:def.version,count:a.count,selection:a.selection??null,date_mode:parameter_plan.mode,...(parameter_plan.mode==='saved_parameters'?{parameter_plan}:{}),note:'使用已保存SQL原日期；选列不改变行、日期或计算方式。未知列名与重复表头在结果返回后拒绝，不静默替换。'};
  const preview_hash=await configHash(preview);
