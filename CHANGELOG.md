@@ -1,3 +1,7 @@
+## 0.2.5 — 2026-10-23 — rolling funnel fix
+
+Fix the rolling funnel duration being overridden by an extra option. Minute/hour/day windows now use the documented request and distinct durations can return different conversions. Existing stored definitions are preserved; reruns use the corrected calculation. Custom frequency bins were cross-checked against the console. Dashboard/report/native-metric editing APIs are vendor-unsupported; advanced association and attribution contracts remain unverified.
+
 ## Unreleased — web UI
 
 Correct report row-limit follow-ups, hide unsupported controls, and reject invalid counts before submission. MCP runtime remains 0.2.4.
